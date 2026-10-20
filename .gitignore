@@ -1,0 +1,5 @@
+# Editors / OS
+.idea/
+.vscode/
+*.iml
+.DS_Store

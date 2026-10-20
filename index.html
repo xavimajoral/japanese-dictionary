@@ -1,0 +1,270 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Curs de Japonès</title>
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Kiwi+Maru:wght@400;500&family=Mochiy+Pop+One&family=Zen+Maru+Gothic:wght@400;500;700&family=DM+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <div class="seal" lang="ja" aria-hidden="true">辞書</div>
+    <div class="titles">
+      <p class="eyebrow" lang="ja" aria-hidden="true">日本語 ・ 英語</p>
+      <h1>Curs de Japonès</h1>
+      <p class="lede">Course vocabulary and notes, with the stroke order of every kana and kanji.</p>
+    </div>
+  </header>
+
+  <nav class="tabs" id="tabs" role="tablist" aria-label="Sections">
+    <button type="button" class="tab" role="tab" id="tabDict" data-tab="dict" aria-controls="pDict" aria-selected="true"><span class="kan" lang="ja" aria-hidden="true">辞書</span>Dictionary</button>
+    <button type="button" class="tab" role="tab" id="tabNotes" data-tab="notes" aria-controls="pNotes" aria-selected="false" tabindex="-1"><span class="kan" lang="ja" aria-hidden="true">文法</span>Grammar and notes</button>
+  </nav>
+
+  <div class="layout" id="pDict" role="tabpanel" aria-labelledby="tabDict">
+    <section class="player" aria-label="Stroke order">
+      <p class="label" aria-hidden="true"><span class="kan" lang="ja">筆順</span>Stroke order</p>
+      <button type="button" class="del pclose" id="pClose" aria-label="Close stroke order" title="Close stroke order">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+      </button>
+      <div class="word">
+        <div class="jp" id="pJp" lang="ja"></div>
+        <div class="meta"><span class="kana" id="pKa" lang="ja"></span><span class="romaji" id="pRo"></span><button type="button" class="reg none" id="pReg" hidden></button><span class="ca" id="pCa"></span></div>
+      </div>
+      <div class="stage" id="stage" role="group"></div>
+      <div class="charnav" id="charnav" hidden>
+        <button type="button" class="btn" id="bPrevC" aria-label="Previous character" title="Previous character">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 5l-7 7 7 7M20 5l-7 7 7 7"/></svg>
+          <span>Prev</span>
+        </button>
+        <output id="charPos" aria-live="polite"></output>
+        <button type="button" class="btn" id="bNextC" aria-label="Next character" title="Next character">
+          <span>Next</span>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 5l7 7-7 7M4 5l7 7-7 7"/></svg>
+        </button>
+      </div>
+      <div class="scrub">
+        <input type="range" id="scrub" min="0" max="0" step="1" value="0" aria-label="Strokes shown">
+        <output id="count" for="scrub"></output>
+      </div>
+      <div class="controls">
+        <button type="button" class="btn" id="bReset" aria-label="Play from the beginning" title="Play from the beginning">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5v5h5"/><path d="M5.6 15a8 8 0 1 0 1.2-8.2L4 10"/></svg>
+        </button>
+        <button type="button" class="btn" id="bBack" aria-label="Previous stroke" title="Previous stroke">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg>
+        </button>
+        <button type="button" class="btn primary" id="bPlay">
+          <svg id="icPlay" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7 5v14l12-7z"/></svg>
+          <svg id="icPause" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" hidden><path d="M7 5h3.5v14H7zM13.5 5H17v14h-3.5z"/></svg>
+          <span id="playLabel">Play</span>
+        </button>
+        <button type="button" class="btn" id="bFwd" aria-label="Next stroke" title="Next stroke">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg>
+        </button>
+      </div>
+      <div class="opts">
+        <label for="speed">Speed
+          <select id="speed">
+            <option value="0.5">0.5×</option>
+            <option value="1" selected>1×</option>
+            <option value="1.5">1.5×</option>
+            <option value="2">2×</option>
+          </select>
+        </label>
+        <label for="nums"><input type="checkbox" id="nums" checked> Show numbers</label>
+        <label for="voice" id="voiceOpt" hidden>Voice
+          <select id="voice"></select>
+        </label>
+      </div>
+    </section>
+
+    <main class="book">
+      <div class="toolbar">
+        <div class="search">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5L20 20"/></svg>
+          <input type="search" id="q" placeholder="Search in Japanese, furigana, romaji or English" aria-label="Search" autocomplete="off">
+        </div>
+        <span class="count" id="total" aria-live="polite"></span>
+        <button type="button" class="btn popen" id="pOpen" hidden><span class="kan" lang="ja" aria-hidden="true">筆順</span>Show stroke order</button>
+      </div>
+      <div class="chips sub" id="wgroups" role="group" aria-label="Filter words by group"></div>
+
+      <div class="tablewrap">
+        <table>
+          <thead id="sortbar"><tr><th scope="col"><button type="button" class="sorth" data-sort="kana">Furigana<svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 10V2M2.5 5.5L6 2l3.5 3.5"/></svg></button></th><th scope="col"><button type="button" class="sorth" data-sort="jp">Japanese<svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 10V2M2.5 5.5L6 2l3.5 3.5"/></svg></button></th><th scope="col"><button type="button" class="sorth" data-sort="romaji">Romaji<svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 10V2M2.5 5.5L6 2l3.5 3.5"/></svg></button></th><th scope="col"><button type="button" class="sorth" data-sort="ca">English<svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 10V2M2.5 5.5L6 2l3.5 3.5"/></svg></button></th><th scope="col"><span class="sr" style="position:absolute;left:-9999px">Actions</span></th></tr></thead>
+          <tbody id="rows"></tbody>
+        </table>
+      </div>
+      <div class="status" id="status" aria-live="polite"></div>
+
+      <form class="add" id="form" autocomplete="off" novalidate>
+        <h2 class="label"><span class="kan" lang="ja" aria-hidden="true" id="fKan">追加</span><span id="fHead">Add a word</span></h2>
+        <div class="fields">
+          <div class="field"><label for="fJp">Japanese</label>
+            <input type="text" id="fJp" class="jpin" lang="ja" placeholder="例：犬">
+          </div>
+          <div class="field"><label for="fKa">Furigana</label>
+            <div class="inrow"><input type="text" id="fKa" class="jpin" lang="ja" placeholder="いぬ"><button type="button" class="btn kanji" id="fGen" lang="ja" title="Fill in the Japanese with kanji from the furigana" aria-label="Convert the furigana to kanji">漢字</button></div>
+          </div>
+          <div class="field"><label for="fRo">Romaji</label><input type="text" id="fRo" placeholder="inu"></div>
+          <div class="field"><label for="fCa">English</label><input type="text" id="fCa" placeholder="dog"></div>
+        </div>
+        <div class="ffoot">
+          <div class="field grpfield"><label for="fGroup">Group</label><div class="inrow"><select id="fGroup"></select><button type="button" class="btn" id="fGrpRen" title="Rename this group" hidden>Rename</button><button type="button" class="btn" id="fGrpDel" title="Delete this group (its words move to Other)" hidden>Delete</button></div>
+            <div class="inrow" id="fGrpNew" hidden><input type="text" id="fGrpName" maxlength="40" placeholder="Name of the new group" aria-label="Name of the new group"><button type="button" class="btn" id="fGrpAdd">Add</button></div>
+          </div>
+          <div class="field regfield"><span class="flabel" id="fRegLabel">Register (optional)</span>
+            <div class="seg three" role="radiogroup" aria-labelledby="fRegLabel">
+              <label><input type="radio" name="freg" value="" checked><span>Any</span></label>
+              <label title="Polite or honorific speech (敬語)"><input type="radio" name="freg" value="hon"><span>Honorific</span></label>
+              <label title="Casual speech with friends and family (タメ口)"><input type="radio" name="freg" value="cas"><span>Casual</span></label>
+            </div>
+          </div>
+          <div class="fbtns"><button type="submit" class="btn primary" id="fSubmit">Add</button><button type="button" class="btn" id="fCancel" hidden>Cancel</button></div>
+        </div>
+        <div class="sugg" id="sugg" hidden>
+          <span class="sugg-label">Suggestions</span>
+          <div class="chips" id="suggChips" role="group" aria-label="Spellings suggested from the romaji"></div>
+        </div>
+        <p class="hint" id="hint"></p>
+      </form>
+
+      <details class="backup">
+        <summary><span class="label"><span class="kan" lang="ja" aria-hidden="true">保存</span>Backup</span></summary>
+        <div class="body">
+          <p class="hint">Words are stored in this browser. Copy this JSON to keep it, or paste one and load it.</p>
+          <textarea id="backup" spellcheck="false" aria-label="Words as JSON"></textarea>
+          <div class="row">
+            <button type="button" class="btn" id="bCopy">Copy</button>
+            <button type="button" class="btn" id="bLoad">Load</button>
+            <span class="hint" id="backupMsg" aria-live="polite"></span>
+          </div>
+        </div>
+      </details>
+    </main>
+  </div>
+
+  <div class="layout notes" id="pNotes" role="tabpanel" aria-labelledby="tabNotes" hidden>
+    <main class="shelf">
+      <div class="toolbar">
+        <div class="search">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5L20 20"/></svg>
+          <input type="search" id="nQ" placeholder="Search notes" aria-label="Search notes" autocomplete="off">
+        </div>
+      </div>
+      <div class="chips" id="chips" role="group" aria-label="Filter by type">
+        <button type="button" class="chip" data-f="all" aria-pressed="true">All <span class="n"></span></button>
+        <button type="button" class="chip" data-f="gram" aria-pressed="false">Grammar <span class="n"></span></button>
+        <button type="button" class="chip" data-f="frase" aria-pressed="false">Sentences <span class="n"></span></button>
+        <button type="button" class="chip" data-f="dibuix" aria-pressed="false">Drawings <span class="n"></span></button>
+        <button type="button" class="chip" data-f="nota" aria-pressed="false">Notes <span class="n"></span></button>
+      </div>
+      <div class="chips sub" id="sgroups" role="group" aria-label="Filter sentences by group" hidden></div>
+      <div class="notelist" id="notes"></div>
+      <div class="status" id="nStatus" aria-live="polite"></div>
+
+      <details class="backup">
+        <summary><span class="label"><span class="kan" lang="ja" aria-hidden="true">保存</span>Notes backup</span></summary>
+        <div class="body">
+          <p class="hint">Notes are stored in this browser, separately from the words. Copy this JSON to keep it, or paste one and load it.</p>
+          <textarea id="nBackup" spellcheck="false" aria-label="Notes as JSON"></textarea>
+          <div class="row">
+            <button type="button" class="btn" id="nCopy">Copy</button>
+            <button type="button" class="btn" id="nLoad">Load</button>
+            <span class="hint" id="nBackupMsg" aria-live="polite"></span>
+          </div>
+        </div>
+      </details>
+    </main>
+
+    <section class="composer" id="composer" aria-labelledby="cTitle">
+      <h2 class="label" id="cTitle"><span class="kan" lang="ja" aria-hidden="true">記入</span><span id="cTitleText">New note</span></h2>
+      <form id="nForm" autocomplete="off" novalidate>
+        <div class="seg" role="radiogroup" aria-label="Note type">
+          <label><input type="radio" name="ntype" value="gram" checked><span>Grammar</span></label>
+          <label><input type="radio" name="ntype" value="frase"><span>Sentence</span></label>
+          <label><input type="radio" name="ntype" value="dibuix"><span>Drawing</span></label>
+          <label><input type="radio" name="ntype" value="nota"><span>Note</span></label>
+        </div>
+        <div class="field" data-for="gram dibuix nota"><label for="nTitle">Title</label><input type="text" id="nTitle"></div>
+        <div class="field" data-for="gram frase"><label for="nJp" id="nJpLabel">Pattern</label><input type="text" id="nJp" class="jpin" lang="ja"></div>
+        <div class="field" data-for="frase"><label for="nKa">Furigana</label>
+          <div class="inrow"><input type="text" id="nKa" class="jpin" lang="ja" placeholder="にほんごをべんきょうしています。"><button type="button" class="btn kanji" id="nKan" lang="ja" title="Fill in the Japanese sentence with kanji from the furigana" aria-label="Convert the furigana to kanji">漢字</button></div>
+        </div>
+        <div class="field" data-for="frase"><label for="nRo">Romaji</label>
+          <div class="inrow"><input type="text" id="nRo" placeholder="nihongo o benkyō shite imasu."><button type="button" class="btn" id="nGen" title="Fill in the Japanese sentence and the furigana from the romaji">Generate</button></div>
+        </div>
+        <div class="field" data-for="frase"><label for="nCa">English</label><input type="text" id="nCa" placeholder="I am studying Japanese."></div>
+        <div class="field" data-for="frase"><label for="nGroup">Group</label><div class="inrow"><select id="nGroup"></select><button type="button" class="btn" id="nGrpRen" title="Rename this group" hidden>Rename</button><button type="button" class="btn" id="nGrpDel" title="Delete this group (its sentences move to Other)" hidden>Delete</button></div>
+          <div class="inrow" id="nGrpNew" hidden><input type="text" id="nGrpName" maxlength="40" placeholder="Name of the new group" aria-label="Name of the new group"><button type="button" class="btn" id="nGrpAdd">Add</button></div>
+        </div>
+        <div class="field" data-for="gram frase"><span class="flabel" id="nRegLabel">Register (optional)</span>
+          <div class="seg three" role="radiogroup" aria-labelledby="nRegLabel">
+            <label><input type="radio" name="nreg" value="" checked><span>Any</span></label>
+            <label title="Polite or honorific speech (敬語)"><input type="radio" name="nreg" value="hon"><span>Honorific</span></label>
+            <label title="Casual speech with friends and family (タメ口)"><input type="radio" name="nreg" value="cas"><span>Casual</span></label>
+          </div>
+        </div>
+        <div class="padfield" data-for="dibuix">
+          <span class="flabel" id="padLabel">Drawing</span>
+          <svg id="pad" viewBox="0 0 400 300" role="img" aria-labelledby="padLabel"><g id="padInk"></g></svg>
+          <div class="padtools">
+            <span class="pens" role="radiogroup" aria-label="Color">
+              <label class="pen" title="Ink"><input type="radio" name="pcolor" value="i" checked><span class="dot ink"></span><span class="sr">Ink</span></label>
+              <label class="pen" title="Red"><input type="radio" name="pcolor" value="a"><span class="dot shu"></span><span class="sr">Red</span></label>
+            </span>
+            <label for="pWidth">Width
+              <select id="pWidth">
+                <option value="2.5">Thin</option>
+                <option value="5" selected>Medium</option>
+                <option value="9">Thick</option>
+              </select>
+            </label>
+            <label for="nGrid"><input type="checkbox" id="nGrid" checked> Grid</label>
+            <span class="padbtns">
+              <button type="button" class="btn" id="pUndo">Undo</button>
+              <button type="button" class="btn" id="pClear">Clear</button>
+            </span>
+          </div>
+        </div>
+        <div class="field"><label for="nBody" id="nBodyLabel">Explanation</label><textarea id="nBody"></textarea></div>
+        <div class="field" data-for="gram"><label for="nEx">Examples</label><textarea id="nEx" class="jpin" lang="ja" placeholder="わたしはがくせいです。 = I am a student."></textarea></div>
+        <div class="row">
+          <button type="submit" class="btn primary" id="nSave">Save note</button>
+          <button type="button" class="btn" id="nCancel" hidden>Cancel</button>
+        </div>
+        <p class="hint" id="nHint"></p>
+      </form>
+    </section>
+  </div>
+
+  <footer>
+    <svg class="waves" aria-hidden="true">
+      <defs>
+        <g id="scale"><circle r="20"/><circle r="15"/><circle r="10"/><circle r="5"/></g>
+        <pattern id="seigaiha" width="40" height="20" patternUnits="userSpaceOnUse">
+          <use href="#scale" x="20" y="0"/><use href="#scale" x="0" y="10"/><use href="#scale" x="40" y="10"/>
+          <use href="#scale" x="20" y="20"/><use href="#scale" x="0" y="30"/><use href="#scale" x="40" y="30"/>
+        </pattern>
+      </defs>
+      <rect width="100%" height="100%" fill="url(#seigaiha)"/>
+    </svg>
+    <p>
+      <span id="coverage"></span>
+      Stroke order: <a href="https://kanjivg.tagaini.net/" target="_blank" rel="noopener">KanjiVG</a>, © Ulrich Apel, licensed under CC BY-SA 3.0. The starting words are examples and can be deleted.
+    </p>
+  </footer>
+</div>
+
+<button type="button" class="btn primary fab" id="fab"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M10 4v12M4 10h12"/></svg>Add word</button>
+
+<script src="js/strokes.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
