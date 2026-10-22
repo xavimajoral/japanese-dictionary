@@ -1,0 +1,48 @@
+/* "Sora": a sister of the base Sakura design, same kawaii stationery (rounded fonts, sticker panels, pill buttons,
+   cat-eared seal) in a daytime-sky palette. Baby-blue paper with little clouds and stars, navy ink, a sky-blue
+   accent with a sunny lemon primary, and stars instead of hearts. Uses the base fonts, so no @import. Loaded after
+   style.css; keep its three colour blocks in sync. */
+:root {
+  --bg: #EAF5FF; --bg-hi: #F7FBFF; --panel: #FAFDFF; --paper: #FFFFFF; --ink: #2C3A5C; --ink-soft: #6D7C9C;
+  --rule: #CFE3F6; --guide: #A9D2F5; --ghost: #E2EEF9; --accent: #2E8BD8; --accent-ink: #FFFFFF;
+  --accent-soft: #DCEEFF; --primary: #F2B632; --primary-ink: #3A2A00; --hover: #E4F1FD; --danger: #D1435B;
+  --honor: #DB3E62; --honor-soft: #FFE0E8; --casual: #2A9D8F; --casual-soft: #D6F2EE;
+  --mint: #9FE2D2; --lemon: #FFE89A; --lilac: #DCE2FF; --pattern: #8FC3F0;
+  --g0: #D6EBFF; --g1: #FFF0BF; --g2: #D3F2E4; --g3: #FFDCE6; --g4: #E2DEFF; --g5: #FFE3CC; --g6: #CFEFF2; --g7: #E9F5C8;
+  --shadow: 0 3px 0 color-mix(in srgb, var(--accent) 14%, transparent), 0 16px 32px -18px color-mix(in srgb, var(--accent) 45%, transparent);
+  --grain: .55; --photo: .32;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #121A2E; --bg-hi: #1B2640; --panel: #172137; --paper: #1E2A44; --ink: #E8F0FF; --ink-soft: #A3B2D0;
+    --rule: #2E3D5E; --guide: #3D5A8A; --ghost: #26334F; --accent: #7CC4FF; --accent-ink: #0F1A2E;
+    --accent-soft: #1F3A5E; --primary: #FFD66B; --primary-ink: #2A1F00; --hover: #22304C; --danger: #FF8FA3;
+    --honor: #FF8AA2; --honor-soft: #4A2231; --casual: #6FD6C6; --casual-soft: #173F3B;
+    --mint: #3F8F7E; --lemon: #A08A45; --lilac: #3B4570; --pattern: #4E6FA6;
+    --g0: #243A5C; --g1: #4E4422; --g2: #23493C; --g3: #5A2A40; --g4: #3E3366; --g5: #573523; --g6: #1E474C; --g7: #3C4A22;
+    --shadow: 0 3px 0 rgba(0, 0, 0, .25), 0 16px 32px -18px rgba(0, 0, 0, .7); --grain: .45; --photo: .2;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #121A2E; --bg-hi: #1B2640; --panel: #172137; --paper: #1E2A44; --ink: #E8F0FF; --ink-soft: #A3B2D0;
+  --rule: #2E3D5E; --guide: #3D5A8A; --ghost: #26334F; --accent: #7CC4FF; --accent-ink: #0F1A2E;
+  --accent-soft: #1F3A5E; --primary: #FFD66B; --primary-ink: #2A1F00; --hover: #22304C; --danger: #FF8FA3;
+  --honor: #FF8AA2; --honor-soft: #4A2231; --casual: #6FD6C6; --casual-soft: #173F3B;
+  --mint: #3F8F7E; --lemon: #A08A45; --lilac: #3B4570; --pattern: #4E6FA6;
+  --g0: #243A5C; --g1: #4E4422; --g2: #23493C; --g3: #5A2A40; --g4: #3E3366; --g5: #573523; --g6: #1E474C; --g7: #3C4A22;
+  --shadow: 0 3px 0 rgba(0, 0, 0, .25), 0 16px 32px -18px rgba(0, 0, 0, .7); --grain: .45; --photo: .2;
+}
+/* Sky paper: puffy clouds, dots and four-point stars instead of polka dots and sakura. */
+body::before {
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cg fill='%23000'%3E%3Ccircle cx='22' cy='30' r='2.5'/%3E%3Ccircle cx='118' cy='150' r='3'/%3E%3Ccircle cx='176' cy='96' r='2'/%3E%3Ccircle cx='70' cy='186' r='2'/%3E%3C/g%3E%3Cg fill='%23000' opacity='.6' transform='translate(120 40)'%3E%3Ccircle cx='0' cy='6' r='9'/%3E%3Ccircle cx='12' cy='0' r='12'/%3E%3Ccircle cx='26' cy='6' r='9'/%3E%3Crect x='0' y='6' width='26' height='9' rx='4.5'/%3E%3C/g%3E%3Cg fill='%23000' opacity='.45' transform='translate(26 110) scale(.7)'%3E%3Ccircle cx='0' cy='6' r='9'/%3E%3Ccircle cx='12' cy='0' r='12'/%3E%3Ccircle cx='26' cy='6' r='9'/%3E%3Crect x='0' y='6' width='26' height='9' rx='4.5'/%3E%3C/g%3E%3Cg fill='%23000' opacity='.75'%3E%3Cpath d='M78 62l2.4 6.6 6.6 2.4-6.6 2.4L78 80l-2.4-6.6L69 71l6.6-2.4z'/%3E%3Cpath d='M168 172l1.8 4.2 4.2 1.8-4.2 1.8-1.8 4.2-1.8-4.2-4.2-1.8 4.2-1.8z'/%3E%3C/g%3E%3C/svg%3E") 0 0 / 200px 200px;
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cg fill='%23000'%3E%3Ccircle cx='22' cy='30' r='2.5'/%3E%3Ccircle cx='118' cy='150' r='3'/%3E%3Ccircle cx='176' cy='96' r='2'/%3E%3Ccircle cx='70' cy='186' r='2'/%3E%3C/g%3E%3Cg fill='%23000' opacity='.6' transform='translate(120 40)'%3E%3Ccircle cx='0' cy='6' r='9'/%3E%3Ccircle cx='12' cy='0' r='12'/%3E%3Ccircle cx='26' cy='6' r='9'/%3E%3Crect x='0' y='6' width='26' height='9' rx='4.5'/%3E%3C/g%3E%3Cg fill='%23000' opacity='.45' transform='translate(26 110) scale(.7)'%3E%3Ccircle cx='0' cy='6' r='9'/%3E%3Ccircle cx='12' cy='0' r='12'/%3E%3Ccircle cx='26' cy='6' r='9'/%3E%3Crect x='0' y='6' width='26' height='9' rx='4.5'/%3E%3C/g%3E%3Cg fill='%23000' opacity='.75'%3E%3Cpath d='M78 62l2.4 6.6 6.6 2.4-6.6 2.4L78 80l-2.4-6.6L69 71l6.6-2.4z'/%3E%3Cpath d='M168 172l1.8 4.2 4.2 1.8-4.2 1.8-1.8 4.2-1.8-4.2-4.2-1.8 4.2-1.8z'/%3E%3C/g%3E%3C/svg%3E") 0 0 / 200px 200px;
+}
+.addpop::backdrop, .notepop::backdrop { background: rgba(20, 40, 80, .28); }
+/* Stars where the base has hearts; the title sparkles get a little sun. */
+.titles::after { content: "✦ ☀ ✧"; }
+.backup summary .label::after { content: "☆"; }
+.backup[open] summary .label::after { content: "★"; }
+footer p::before { content: "☆ "; }
+/* A blue-to-lemon gradient can't carry one text colour, so the primary button is solid lemon, sky blue on hover. */
+.btn.primary { background: var(--primary); color: var(--primary-ink); }
+.btn.primary:hover:not(:disabled) { background: var(--accent); color: var(--accent-ink); filter: none; }

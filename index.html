@@ -10,8 +10,9 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Kiwi+Maru:wght@400;500&family=Mochiy+Pop+One&family=Zen+Maru+Gothic:wght@400;500;700&family=DM+Mono:wght@400;500&display=swap">
 <link rel="stylesheet" href="css/style.css">
 <!-- Themes, CSS Zen Garden style: one markup, one stylesheet per design. style.css is the base "Sakura" design; the
-     saved theme's css/themes/<name>.css is linked after it here, before first paint. The choices are #themeSel's options. -->
-<script>try { var s = localStorage.getItem("diccionari-japones-estil"); if (s && s !== "sakura" && /^[a-z]+$/.test(s)) { document.documentElement.dataset.style = s; document.write('<link rel="stylesheet" href="css/themes/' + s + '.css" data-skin="' + s + '">'); } } catch (e) { /* ignore */ }</script>
+     saved theme's css/themes/<name>.css (or the default, "shinbun") is linked after it here, before first paint. The
+     choices are #themeSel's options. -->
+<script>var s = "shinbun"; try { s = localStorage.getItem("diccionari-japones-estil") || s; } catch (e) { /* ignore */ } if (s !== "sakura" && /^[a-z]+$/.test(s)) { document.documentElement.dataset.style = s; document.write('<link rel="stylesheet" href="css/themes/' + s + '.css" data-skin="' + s + '">'); }</script>
 </head>
 <body>
 <div class="wrap">
@@ -27,6 +28,7 @@
       <span>Theme</span>
       <select id="themeSel">
         <option value="sakura">Sakura</option>
+        <option value="sora">Sora</option>
         <option value="sumi">Sumi</option>
         <option value="matcha">Matcha</option>
         <option value="neon">Neon</option>

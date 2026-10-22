@@ -1188,13 +1188,14 @@
 
   /* ---------- theme ---------- */
   // CSS Zen Garden style: "sakura" is style.css itself, every other option of #themeSel is css/themes/<name>.css
-  // linked after it (link[data-skin]). index.html links the saved one before first paint. The new sheet replaces the
-  // old one only once it has loaded, so switching doesn't flash the base design.
+  // linked after it (link[data-skin]). index.html links the saved one (or DEFAULT_STYLE) before first paint. The new
+  // sheet replaces the old one only once it has loaded, so switching doesn't flash the base design.
   const STYLE_KEY = "diccionari-japones-estil";
+  const DEFAULT_STYLE = "shinbun";
   const THEMES = Array.from($("themeSel").options, (o) => o.value);
   let wantedStyle = "sakura";
   function setStyle(name, remember) {
-    if (!THEMES.includes(name)) name = "sakura";
+    if (!THEMES.includes(name)) name = DEFAULT_STYLE;
     wantedStyle = name;
     $("themeSel").value = name;
     const root = document.documentElement;
