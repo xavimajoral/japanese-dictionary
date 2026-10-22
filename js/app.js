@@ -254,6 +254,7 @@
     }
     return out;
   }
+  const unsaved = { words: false, notes: false }; // still showing the examples, see seedFromRepo()
   let dir = null; // folder linked for auto-save, see "auto-save to a folder"
   let dirQueue = Promise.resolve();
   function load() {
@@ -261,6 +262,7 @@
       const raw = localStorage.getItem(KEY);
       if (raw) { const c = clean(JSON.parse(raw)); if (c) return c; }
     } catch (e) { /* storage unavailable: start from the examples */ }
+    unsaved.words = true;
     return SEED.map(([jp, kana, romaji, ca, group]) => ({ id: uid(), jp, kana, romaji, ca, reg: "", group }));
   }
   // Stored without ids; reg and group only when set.
@@ -273,6 +275,7 @@
     });
   }
   function save() {
+    unsaved.words = false;
     try { localStorage.setItem(KEY, JSON.stringify(plain())); } catch (e) { /* ignore */ }
     toFolder("words.json", wordsJson);
   }
@@ -1357,6 +1360,7 @@
       const raw = localStorage.getItem(NKEY);
       if (raw) { const c = cleanNotes(JSON.parse(raw)); if (c) return c; }
     } catch (e) { /* storage unavailable: start from the examples */ }
+    unsaved.notes = true;
     const now = Date.now();
     return cleanNotes(NSEED.map((n, i) => Object.assign({ at: now - i }, n)));
   }
@@ -1374,6 +1378,7 @@
     });
   }
   function saveNotes() {
+    unsaved.notes = false;
     toFolder("notes.json", notesJson);
     try { localStorage.setItem(NKEY, JSON.stringify(plainNotes())); return true; } catch (e) { return false; }
   }
@@ -1850,4 +1855,27 @@
   let savedPlayer = null;
   try { savedPlayer = localStorage.getItem(PLAYER_KEY); } catch (e) { /* ignore */ }
   showPlayer(savedPlayer !== "0");
+  seedFromRepo();
+
+  // Nothing saved yet: replace the examples with the repo's data/ files (the deployed site's content).
+  // Not stored until the first change, so a newer data/ still shows up. Fails from file://, keeping the examples.
+  function seedFromRepo() {
+    const get = (f) => fetch("data/" + f, { cache: "no-cache" }).then((r) => (r.ok ? r.json() : null)).catch(() => null);
+    if (unsaved.words) get("words.json").then((a) => {
+      const c = a && clean(a);
+      if (!c || !c.length || !unsaved.words) return;
+      words = c;
+      renderList();
+      refreshBackup();
+      const w = listed()[0];
+      select(w ? w.id : null);
+    });
+    if (unsaved.notes) get("notes.json").then((a) => {
+      const c = a && cleanNotes(a);
+      if (!c || !c.length || !unsaved.notes) return;
+      notes = c;
+      renderNotes();
+      refreshNoteBackup();
+    });
+  }
 })();
