@@ -1,0 +1,63 @@
+/* "Matcha": a tea house. Cream paper scattered with tea leaves, moss-green ink, a matcha accent with hojicha-brown
+   buttons, a round tea-bowl seal, Shippori Mincho for the Japanese and the title. Loaded after style.css; keep its
+   three colour blocks in sync. */
+@import url("https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@500;700;800&display=swap");
+
+:root {
+  --bg: #EEF0E2; --bg-hi: #F8F9EF; --panel: #FBFBF4; --paper: #FFFFFC; --ink: #2F3A2A; --ink-soft: #69735E;
+  --rule: #D9DDC6; --guide: #BCCB9E; --ghost: #E6E9D6; --accent: #557F2C; --accent-ink: #FFFFFF;
+  --accent-soft: #E2ECCE; --primary: #8A5A3B; --primary-ink: #FFFFFF; --hover: #EDF1DF; --danger: #B5452F;
+  --honor: #BE4237; --honor-soft: #F5DDD6; --casual: #35709F; --casual-soft: #DBE7F1;
+  --mint: #A9D3B5; --lemon: #E8D68E; --lilac: #DADCEB; --pattern: #96AB6E;
+  --g0: #E3ECCB; --g1: #D9E6EE; --g2: #CFE7D8; --g3: #F1E7C4; --g4: #E4DDEC; --g5: #EEDCC8; --g6: #D3E8E2; --g7: #EAD9DD;
+  --shadow: 0 2px 0 color-mix(in srgb, var(--primary) 14%, transparent), 0 16px 30px -20px color-mix(in srgb, var(--accent) 50%, transparent);
+  --grain: .3; --r: 18px; --r-sm: 12px; --r-cell: 12px;
+  --font-jp: "Shippori Mincho", "Hiragino Mincho ProN", "Yu Mincho", serif;
+  --font-pop: "Shippori Mincho", "Hiragino Mincho ProN", serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #141A11; --bg-hi: #1D2519; --panel: #192016; --paper: #1F271B; --ink: #E9ECDD; --ink-soft: #A2AB91;
+    --rule: #333E2B; --guide: #4C5C36; --ghost: #2A3324; --accent: #A8CB7C; --accent-ink: #16200E;
+    --accent-soft: #2F3D22; --primary: #D9A77E; --primary-ink: #1A120C; --hover: #252E1F; --danger: #F0907A;
+    --honor: #F0948A; --honor-soft: #3E2522; --casual: #8DB8E6; --casual-soft: #1E2C3E;
+    --mint: #4E8A68; --lemon: #8C8048; --lilac: #3C4258; --pattern: #4E5F3A;
+    --g0: #34432A; --g1: #263848; --g2: #224034; --g3: #4A4326; --g4: #3A3550; --g5: #4C3826; --g6: #22423E; --g7: #47303A;
+    --shadow: 0 2px 0 rgba(0, 0, 0, .25), 0 16px 32px -18px rgba(0, 0, 0, .7); --grain: .5;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #141A11; --bg-hi: #1D2519; --panel: #192016; --paper: #1F271B; --ink: #E9ECDD; --ink-soft: #A2AB91;
+  --rule: #333E2B; --guide: #4C5C36; --ghost: #2A3324; --accent: #A8CB7C; --accent-ink: #16200E;
+  --accent-soft: #2F3D22; --primary: #D9A77E; --primary-ink: #1A120C; --hover: #252E1F; --danger: #F0907A;
+  --honor: #F0948A; --honor-soft: #3E2522; --casual: #8DB8E6; --casual-soft: #1E2C3E;
+  --mint: #4E8A68; --lemon: #8C8048; --lilac: #3C4258; --pattern: #4E5F3A;
+  --g0: #34432A; --g1: #263848; --g2: #224034; --g3: #4A4326; --g4: #3A3550; --g5: #4C3826; --g6: #22423E; --g7: #47303A;
+  --shadow: 0 2px 0 rgba(0, 0, 0, .25), 0 16px 32px -18px rgba(0, 0, 0, .7); --grain: .5;
+}
+/* Tea leaves and a few dots. */
+body::before {
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cg fill='%23000'%3E%3Cpath d='M18 40c6-12 20-16 30-10-6 12-20 16-30 10z'/%3E%3Cpath d='M92 104c8-10 22-10 30-2-8 10-22 10-30 2z' opacity='.7'/%3E%3Ccircle cx='104' cy='32' r='2.2'/%3E%3Ccircle cx='40' cy='112' r='1.8'/%3E%3C/g%3E%3C/svg%3E") 0 0 / 140px 140px;
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cg fill='%23000'%3E%3Cpath d='M18 40c6-12 20-16 30-10-6 12-20 16-30 10z'/%3E%3Cpath d='M92 104c8-10 22-10 30-2-8 10-22 10-30 2z' opacity='.7'/%3E%3Ccircle cx='104' cy='32' r='2.2'/%3E%3Ccircle cx='40' cy='112' r='1.8'/%3E%3C/g%3E%3C/svg%3E") 0 0 / 140px 140px;
+}
+/* The seal is a tea bowl seen from above: a matcha disc with a foam ring. */
+.seal {
+  width: 68px; height: 68px; margin-top: 0; border-radius: 50%; transform: none; animation: none;
+  font: 700 18px/1 var(--font-jp); writing-mode: vertical-rl; letter-spacing: .08em;
+  background: radial-gradient(circle at 40% 35%, color-mix(in srgb, var(--accent) 70%, #fff), var(--accent) 70%);
+  box-shadow: 0 0 0 4px var(--paper), 0 0 0 6px var(--primary), 0 6px 14px -6px var(--primary);
+}
+.seal::before, .seal::after, .titles::after { display: none; }
+h1 { font-weight: 800; letter-spacing: .03em; text-shadow: none; }
+.eyebrow { color: var(--primary); }
+header.top::after {
+  height: 8px;
+  background: radial-gradient(circle at 6px 4px, var(--guide) 2px, transparent 2.5px) 0 0 / 18px 8px repeat-x;
+}
+.backup summary .label::after { content: "❀"; }
+.backup[open] summary .label::after { content: "✿"; }
+footer p::before { content: "🍵 "; }
+.btn.primary { background: var(--primary); box-shadow: 0 3px 0 color-mix(in srgb, var(--primary) 55%, var(--ink)); }
+.btn.primary:hover:not(:disabled) { background: color-mix(in srgb, var(--primary) 88%, var(--ink)); color: var(--primary-ink); filter: none; }
+.tab[aria-selected="true"] { background: var(--accent); }
+@media (max-width: 520px) { .seal { width: 54px; height: 54px; font-size: 15px; } }

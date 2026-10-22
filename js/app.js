@@ -254,6 +254,8 @@
     }
     return out;
   }
+  let dir = null; // folder linked for auto-save, see "auto-save to a folder"
+  let dirQueue = Promise.resolve();
   function load() {
     try {
       const raw = localStorage.getItem(KEY);
@@ -272,6 +274,7 @@
   }
   function save() {
     try { localStorage.setItem(KEY, JSON.stringify(plain())); } catch (e) { /* ignore */ }
+    toFolder("words.json", wordsJson);
   }
   let words = load();
   const sortKey = (w) => norm(w.romaji || w.kana || w.jp);
@@ -765,7 +768,8 @@
     if (freshId) setTimeout(() => { const el = body.querySelector("tr.fresh"); if (el) el.classList.remove("fresh"); }, 1700);
   }
 
-  function refreshBackup() { $("backup").value = JSON.stringify(plain(), null, 2); }
+  const wordsJson = () => JSON.stringify(plain(), null, 2);
+  function refreshBackup() { $("backup").value = wordsJson(); }
 
   function removeWord(id) {
     const index = words.findIndex((w) => w.id === id);
@@ -905,9 +909,15 @@
   // Whole sentences: words are separated by spaces, so the particles wa, o and e can be spelt は, を and へ.
   const PARTICLE = { wa: "は", o: "を", e: "へ" };
   const FIXED = { konnichiwa: "こんにちは", konbanwa: "こんばんは", dewa: "では" };
+  // Line breaks are kept: each line is converted on its own.
   function phraseToKana(input) {
+    const lines = input.split("\n").map((l) => l.trim()).filter(Boolean);
+    const out = lines.map(lineToKana);
+    return out.includes("") ? "" : out.join("\n");
+  }
+  function lineToKana(line) {
     let out = "";
-    for (const tok of input.trim().split(/\s+/)) {
+    for (const tok of line.split(/\s+/)) {
       const m = /^([^.,?!]+)([.,?!]*)$/.exec(tok.toLowerCase());
       const fixed = m && (PARTICLE[m[1]] || FIXED[m[1]]);
       const k = fixed ? fixed + romajiToKana(m[2], false) : romajiToKana(tok, false);
@@ -1039,7 +1049,6 @@
     $("fKan").textContent = on ? "編集" : "追加";
     $("fHead").textContent = on ? "Edit word" : "Add a word";
     $("fSubmit").textContent = on ? "Save" : "Add";
-    $("fCancel").hidden = !on;
     document.querySelectorAll("#rows tr[data-id]").forEach((tr) => tr.classList.toggle("editing", tr.dataset.id === id));
   }
   function startEdit(id) {
@@ -1058,8 +1067,7 @@
     $("suggChips").replaceChildren();
     $("sugg").hidden = true;
     updateHint();
-    $("form").scrollIntoView({ block: "nearest", behavior: reduce.matches ? "auto" : "smooth" });
-    $("fJp").focus({ preventScroll: true });
+    openForm();
   }
   function cancelEdit() {
     if (!editWordId) return;
@@ -1068,11 +1076,26 @@
     wg.close();
     updateSugg();
     updateHint();
+    closeForm();
   }
-  $("fCancel").addEventListener("click", cancelEdit);
-  $("form").addEventListener("keydown", (e) => {
-    if (e.key === "Escape" && editWordId) { e.preventDefault(); cancelEdit(); }
-  });
+
+  /* ---------- add/edit popup ---------- */
+  // The word form and the note composer each live in a modal <dialog>: Escape, the × and Cancel close it,
+  // and so does a click on the blurred backdrop. onClose runs on every close (it drops an edit in progress).
+  function popup(dlg, onClose) {
+    const close = () => { if (dlg.open) dlg.close(); };
+    dlg.addEventListener("close", onClose);
+    // Only a press that starts and ends on the backdrop closes it, not a text selection or stroke dragged out of the form.
+    let downOnBackdrop = false;
+    dlg.addEventListener("pointerdown", (e) => { downOnBackdrop = e.target === dlg; });
+    dlg.addEventListener("click", (e) => { if (downOnBackdrop && e.target === dlg) close(); });
+    dlg.querySelectorAll(".pclose, [id$=Cancel]").forEach((b) => b.addEventListener("click", close));
+    return { open(focusEl) { if (!dlg.open) dlg.showModal(); if (focusEl) focusEl.focus(); }, close };
+  }
+  // A half-typed new word is kept for next time.
+  const wordPop = popup($("addDlg"), cancelEdit);
+  const openForm = () => wordPop.open($("fJp"));
+  const closeForm = wordPop.close;
 
   $("form").addEventListener("submit", (e) => {
     e.preventDefault();
@@ -1099,16 +1122,12 @@
     if (wGroup !== "all" && wGroup !== group) wGroup = "all";
     query = "";
     $("q").value = "";
-    // Keep the form where it is on screen while rows are added above it.
-    const top = $("form").getBoundingClientRect().top;
+    closeForm();
     renderList(w.id);
     refreshBackup();
     updateHint();
     select(w.id, { autoplay: true });
-    const shift = $("form").getBoundingClientRect().top - top;
-    if (shift) window.scrollBy(0, shift);
     status((old ? "Saved “" : "Added “") + jp + "”.");
-    $("fJp").focus({ preventScroll: true });
   });
 
   /* ---------- backup ---------- */
@@ -1164,6 +1183,41 @@
   $("pClose").addEventListener("click", () => showPlayer(false, true));
   $("pOpen").addEventListener("click", () => showPlayer(true, true));
 
+  /* ---------- theme ---------- */
+  // CSS Zen Garden style: "sakura" is style.css itself, every other option of #themeSel is css/themes/<name>.css
+  // linked after it (link[data-skin]). index.html links the saved one before first paint. The new sheet replaces the
+  // old one only once it has loaded, so switching doesn't flash the base design.
+  const STYLE_KEY = "diccionari-japones-estil";
+  const THEMES = Array.from($("themeSel").options, (o) => o.value);
+  let wantedStyle = "sakura";
+  function setStyle(name, remember) {
+    if (!THEMES.includes(name)) name = "sakura";
+    wantedStyle = name;
+    $("themeSel").value = name;
+    const root = document.documentElement;
+    if (name === "sakura") delete root.dataset.style;
+    else root.dataset.style = name;
+    const skins = () => document.querySelectorAll("link[data-skin]");
+    if (name === "sakura") skins().forEach((l) => l.remove());
+    else if (!document.querySelector(`link[data-skin="${name}"]`)) {
+      const link = document.createElement("link");
+      link.rel = "stylesheet";
+      link.href = `css/themes/${name}.css`;
+      link.dataset.skin = name;
+      const done = () => {
+        if (wantedStyle !== name) link.remove();
+        else skins().forEach((l) => { if (l !== link) l.remove(); });
+      };
+      link.addEventListener("load", done);
+      link.addEventListener("error", done);
+      document.head.appendChild(link);
+    }
+    if (remember) try { localStorage.setItem(STYLE_KEY, name); } catch (e) { /* ignore */ }
+  }
+  $("themeSel").addEventListener("change", (e) => setStyle(e.target.value, true));
+  const savedStyle = document.documentElement.dataset.style || "sakura";
+  setStyle(savedStyle, !THEMES.includes(savedStyle));
+
   /* ---------- tabs ---------- */
   const TAB_KEY = "diccionari-japones-pestanya";
   const TABS = { dict: $("tabDict"), notes: $("tabNotes") };
@@ -1201,8 +1255,7 @@
   /* ---------- floating "Add word" button ---------- */
   $("fab").addEventListener("click", () => {
     showTab("dict");
-    $("form").scrollIntoView({ block: "center", behavior: reduce.matches ? "auto" : "smooth" });
-    $("fJp").focus({ preventScroll: true });
+    openForm();
   });
 
   /* ---------- notebook: grammar, sentences, drawings and notes ---------- */
@@ -1321,6 +1374,7 @@
     });
   }
   function saveNotes() {
+    toFolder("notes.json", notesJson);
     try { localStorage.setItem(NKEY, JSON.stringify(plainNotes())); return true; } catch (e) { return false; }
   }
   let notes = loadNotes();
@@ -1421,9 +1475,15 @@
     sg.close();
     $("cTitleText").textContent = "New note";
     $("nSave").textContent = "Save note";
-    $("nCancel").hidden = true;
     markEditing();
   }
+  // A half-written new note is kept when the composer closes; an edit is dropped.
+  const notePop = popup($("noteDlg"), () => { if (editId) resetComposer(); });
+  const openComposer = () => notePop.open(document.querySelector("#nForm [data-for]:not([hidden]) :is(input, textarea)"));
+  $("nNew").addEventListener("click", () => {
+    if (editId) resetComposer();
+    openComposer();
+  });
   function editNote(id) {
     const n = notes.find((x) => x.id === id);
     if (!n) return;
@@ -1446,11 +1506,8 @@
     syncPen();
     $("cTitleText").textContent = "Edit note";
     $("nSave").textContent = "Save changes";
-    $("nCancel").hidden = false;
     markEditing();
-    $("composer").scrollIntoView({ block: "nearest", behavior: reduce.matches ? "auto" : "smooth" });
-    const firstField = document.querySelector("#nForm [data-for]:not([hidden]) input");
-    if (firstField) firstField.focus({ preventScroll: true });
+    openComposer();
   }
   function parseExamples(text) {
     return text.split("\n").map((line) => {
@@ -1459,7 +1516,15 @@
     }).filter((e) => e.jp);
   }
   document.querySelectorAll("input[name=ntype]").forEach((r) => r.addEventListener("change", () => setType(r.value)));
-  $("nCancel").addEventListener("click", resetComposer);
+  // The sentence fields grow with their lines; without field-sizing they get two rows and a resize handle.
+  if (!CSS.supports("field-sizing", "content")) {
+    document.querySelectorAll("textarea.line").forEach((t) => { t.rows = 2; t.style.resize = "vertical"; });
+  }
+  // Converts a multi-line reading line by line, keeping the breaks.
+  async function imeLines(hira) {
+    const best = await Promise.all(hira.split("\n").map(async (l) => (await imeLookup(l))[0]));
+    return best.every(Boolean) ? best.join("\n") : "";
+  }
   // Romaji → furigana (offline) and the sentence with kanji (Google Input Tools; falls back to the furigana).
   $("nGen").addEventListener("click", async () => {
     const btn = $("nGen");
@@ -1474,7 +1539,7 @@
     btn.disabled = true;
     btn.textContent = "Generating…";
     try {
-      const [best] = await imeLookup(hira);
+      const best = await imeLines(hira);
       if (best && $("nKa").value === hira) $("nJp").value = best;
       noteHint();
     } catch {
@@ -1488,7 +1553,7 @@
   // Furigana → the sentence with kanji (Google Input Tools).
   $("nKan").addEventListener("click", async () => {
     const btn = $("nKan");
-    const raw = $("nKa").value.trim().normalize("NFC");
+    const raw = $("nKa").value.split("\n").map((l) => l.trim()).filter(Boolean).join("\n").normalize("NFC");
     const hira = /[a-zāīūēō]/i.test(raw) ? phraseToKana(raw) : raw;
     if (!hira) {
       noteHint(raw ? "Couldn't read the furigana. Type it in hiragana." : "Type the furigana in hiragana first.");
@@ -1498,7 +1563,7 @@
     $("nKa").value = hira;
     btn.disabled = true;
     try {
-      const [best] = await imeLookup(hira);
+      const best = await imeLines(hira);
       if ($("nKa").value !== hira) return;
       if (best) { $("nJp").value = best; noteHint(); }
       else noteHint("No conversion found. Type the kanji by hand.");
@@ -1534,6 +1599,7 @@
     nQuery = "";
     $("nQ").value = "";
     resetComposer();
+    notePop.close();
     renderNotes(id);
     refreshNoteBackup();
     noteStatus(saved ? (old ? "Changes saved." : "Note saved.") : "Couldn't save: the browser's storage is full or unavailable.");
@@ -1643,9 +1709,8 @@
     if (freshId) setTimeout(() => { const el = list.querySelector(".card.fresh"); if (el) el.classList.remove("fresh"); }, 1700);
   }
   // Pretty-printed, but with the stroke coordinate arrays kept on one line.
-  function refreshNoteBackup() {
-    $("nBackup").value = JSON.stringify(plainNotes(), null, 2).replace(/\[\s+([-\d.,\s]+?)\s+\]/g, (m, inner) => "[" + inner.replace(/\s+/g, "") + "]");
-  }
+  const notesJson = () => JSON.stringify(plainNotes(), null, 2).replace(/\[\s+([-\d.,\s]+?)\s+\]/g, (m, inner) => "[" + inner.replace(/\s+/g, "") + "]");
+  function refreshNoteBackup() { $("nBackup").value = notesJson(); }
   function removeNote(id) {
     const index = notes.findIndex((n) => n.id === id);
     if (index < 0) return;
@@ -1699,6 +1764,75 @@
     refreshNoteBackup();
     noteBackupMsg("Loaded " + c.length + (c.length === 1 ? " note." : " notes."));
   });
+
+  /* ---------- auto-save to a folder ---------- */
+  // File System Access API (Chromium only): the chosen directory handle is kept in IndexedDB,
+  // and every save() / saveNotes() rewrites words.json / notes.json there, in the backup format.
+  function idb(mode, fn) {
+    return new Promise((resolve, reject) => {
+      const open = indexedDB.open("diccionari-japones", 1);
+      open.onupgradeneeded = () => open.result.createObjectStore("kv");
+      open.onerror = () => reject(open.error);
+      open.onsuccess = () => {
+        const tx = open.result.transaction("kv", mode);
+        const req = fn(tx.objectStore("kv"));
+        tx.oncomplete = () => resolve(req.result);
+        tx.onerror = () => reject(tx.error);
+      };
+    });
+  }
+  function linkMsg(m) { document.querySelectorAll(".link-msg").forEach((el) => { el.textContent = m; }); }
+  function linkState() {
+    document.querySelectorAll(".link-pick").forEach((b) => { b.textContent = dir ? "Change folder…" : "Auto-save to folder…"; });
+    document.querySelectorAll(".link-stop").forEach((b) => { b.hidden = !dir; });
+  }
+  async function writeFile(name, text) {
+    if (!dir) return;
+    try {
+      // requestPermission needs a recent click; saves always follow one.
+      if (await dir.queryPermission({ mode: "readwrite" }) !== "granted" &&
+          await dir.requestPermission({ mode: "readwrite" }) !== "granted") throw new Error("denied");
+      const w = await (await dir.getFileHandle(name, { create: true })).createWritable();
+      await w.write(text + "\n");
+      await w.close();
+      linkMsg("Saved " + name + " to “" + dir.name + "” at " + new Date().toLocaleTimeString() + ".");
+    } catch (e) {
+      linkMsg("Couldn't save " + name + " to “" + dir.name + "”. Pick the folder again to allow access.");
+    }
+  }
+  function toFolder(name, json) {
+    if (!dir) return;
+    const text = json();
+    dirQueue = dirQueue.then(() => writeFile(name, text));
+  }
+  async function linkFolder() {
+    let d;
+    try { d = await window.showDirectoryPicker({ id: "diccionari-japones", mode: "readwrite" }); } catch (e) { return; }
+    dir = d;
+    try { await idb("readwrite", (s) => s.put(d, "dir")); } catch (e) { /* not remembered across reloads */ }
+    linkState();
+    toFolder("words.json", wordsJson);
+    toFolder("notes.json", notesJson);
+  }
+  function unlinkFolder() {
+    const name = dir ? dir.name : "";
+    dir = null;
+    idb("readwrite", (s) => s.delete("dir")).catch(() => { /* ignore */ });
+    linkState();
+    linkMsg("Stopped auto-saving to “" + name + "”.");
+  }
+  if ("showDirectoryPicker" in window) {
+    document.querySelectorAll(".row.link").forEach((r) => { r.hidden = false; });
+    document.querySelectorAll(".link-pick").forEach((b) => b.addEventListener("click", linkFolder));
+    document.querySelectorAll(".link-stop").forEach((b) => b.addEventListener("click", unlinkFolder));
+    idb("readonly", (s) => s.get("dir")).then(async (d) => {
+      if (!d) return;
+      dir = d;
+      linkState();
+      const ok = await d.queryPermission({ mode: "readwrite" }) === "granted";
+      linkMsg("Auto-saving to “" + d.name + "”." + (ok ? "" : " The browser will ask for access on the next change."));
+    }).catch(() => { /* ignore */ });
+  }
 
   /* ---------- start ---------- */
   renderList();

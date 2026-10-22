@@ -1,0 +1,951 @@
+[
+  {
+    "jp": "有難う",
+    "kana": "（どうも）ありがとう（ございます）",
+    "romaji": "(Doomo) Arigatoo gozaimasu",
+    "ca": "Thank you (very much)",
+    "reg": "hon",
+    "group": "expr"
+  },
+  {
+    "jp": "(どうぞ)よろしく（おねがいします）",
+    "kana": "",
+    "romaji": "(doozo) yoroshiku (onegaishimasu)",
+    "ca": "best regards; please remember me; please treat me favorably",
+    "reg": "hon"
+  },
+  {
+    "jp": "（お）なまえ",
+    "kana": "",
+    "romaji": "(o)namae",
+    "ca": "Name",
+    "reg": "hon"
+  },
+  {
+    "jp": "あい",
+    "kana": "",
+    "romaji": "ai",
+    "ca": "Love"
+  },
+  {
+    "jp": "あかし",
+    "kana": "",
+    "romaji": "akashi",
+    "ca": "Snack"
+  },
+  {
+    "jp": "あめ",
+    "kana": "",
+    "romaji": "ame",
+    "ca": "rain / candy"
+  },
+  {
+    "jp": "アメリカ",
+    "kana": "",
+    "romaji": "amerika",
+    "ca": "USA"
+  },
+  {
+    "jp": "あにめ",
+    "kana": "",
+    "romaji": "anime",
+    "ca": "Anime"
+  },
+  {
+    "jp": "アニメソング",
+    "kana": "",
+    "romaji": "animesongu",
+    "ca": "Anime song",
+    "group": "nom"
+  },
+  {
+    "jp": "アニソン",
+    "kana": "",
+    "romaji": "anison",
+    "ca": "Anime song"
+  },
+  {
+    "jp": "あのお、すみません",
+    "kana": "",
+    "romaji": "Anoo, sumimasen",
+    "ca": "Um, excuse me",
+    "group": "expr"
+  },
+  {
+    "jp": "ありがとう（ございます）",
+    "kana": "",
+    "romaji": "Arigatou (Gozaimasu)",
+    "ca": "Thank you",
+    "reg": "hon"
+  },
+  {
+    "jp": "ばんごう",
+    "kana": "",
+    "romaji": "bangoo",
+    "ca": "Number"
+  },
+  {
+    "jp": "べんきょう",
+    "kana": "",
+    "romaji": "benkyoo",
+    "ca": "Study"
+  },
+  {
+    "jp": "びじゅつ",
+    "kana": "",
+    "romaji": "bijutsu",
+    "ca": "Art; fine arts"
+  },
+  {
+    "jp": "ぼく",
+    "kana": "",
+    "romaji": "boku",
+    "ca": "I (men)"
+  },
+  {
+    "jp": "ちかてつ",
+    "kana": "",
+    "romaji": "chikatetsu",
+    "ca": "Metro"
+  },
+  {
+    "jp": "ちゅうごく",
+    "kana": "",
+    "romaji": "chuugoku",
+    "ca": "China"
+  },
+  {
+    "jp": "だいがく",
+    "kana": "",
+    "romaji": "daigaku",
+    "ca": "College, university"
+  },
+  {
+    "jp": "だいがくいん",
+    "kana": "",
+    "romaji": "daigakuin",
+    "ca": "Gradute school"
+  },
+  {
+    "jp": "だいがくいんせい",
+    "kana": "",
+    "romaji": "daigakuinsee",
+    "ca": "Gradute student"
+  },
+  {
+    "jp": "だいがくせい",
+    "kana": "",
+    "romaji": "daigakusee",
+    "ca": "College student"
+  },
+  {
+    "jp": "だいすき",
+    "kana": "",
+    "romaji": "daisuki",
+    "ca": "Really like it"
+  },
+  {
+    "jp": "ダンス",
+    "kana": "",
+    "romaji": "dansu",
+    "ca": "Dance"
+  },
+  {
+    "jp": "だれ",
+    "kana": "",
+    "romaji": "dare",
+    "ca": "Who"
+  },
+  {
+    "jp": "でんわ",
+    "kana": "",
+    "romaji": "denwa",
+    "ca": "Telephone"
+  },
+  {
+    "jp": "でんわばんごう",
+    "kana": "",
+    "romaji": "denwabangoo",
+    "ca": "Telephone number"
+  },
+  {
+    "jp": "どこ",
+    "kana": "",
+    "romaji": "doko",
+    "ca": "Where"
+  },
+  {
+    "jp": "どくしょ",
+    "kana": "",
+    "romaji": "dokusho",
+    "ca": "Reading"
+  },
+  {
+    "jp": "どおいたしまして",
+    "kana": "",
+    "romaji": "Doo itashimashite",
+    "ca": "You're welcome",
+    "group": "expr"
+  },
+  {
+    "jp": "どうぞ　よろしく　おねがいします",
+    "kana": "",
+    "romaji": "doozo yoroshiku onegai shimasu",
+    "ca": "Meeting for 1st time"
+  },
+  {
+    "jp": "どうぞ",
+    "kana": "",
+    "romaji": "douzo",
+    "ca": "Please take this"
+  },
+  {
+    "jp": "えいが",
+    "kana": "",
+    "romaji": "eega",
+    "ca": "Movie"
+  },
+  {
+    "jp": "えいご",
+    "kana": "",
+    "romaji": "eego",
+    "ca": "English"
+  },
+  {
+    "jp": "えき",
+    "kana": "",
+    "romaji": "eki",
+    "ca": "Train station"
+  },
+  {
+    "jp": "えっと",
+    "kana": "",
+    "romaji": "etto",
+    "ca": "Doncs..."
+  },
+  {
+    "jp": "ふね",
+    "kana": "",
+    "romaji": "fune",
+    "ca": "Ship, boat"
+  },
+  {
+    "jp": "フランス",
+    "kana": "",
+    "romaji": "Furansu",
+    "ca": "France"
+  },
+  {
+    "jp": "学校",
+    "kana": "がっこう",
+    "romaji": "gakkō",
+    "ca": "school"
+  },
+  {
+    "jp": "がくせい",
+    "kana": "",
+    "romaji": "gakusee",
+    "ca": "Student"
+  },
+  {
+    "jp": "ゲーム",
+    "kana": "",
+    "romaji": "geemu",
+    "ca": "Video game; game"
+  },
+  {
+    "jp": "げんご",
+    "kana": "",
+    "romaji": "gengo",
+    "ca": "Language"
+  },
+  {
+    "jp": "ご",
+    "kana": "",
+    "romaji": "go",
+    "ca": "Country"
+  },
+  {
+    "jp": "ごちそおさま(でした)",
+    "kana": "",
+    "romaji": "gochisoosama (deshita)",
+    "ca": "That was good",
+    "reg": "hon"
+  },
+  {
+    "jp": "ごめん",
+    "kana": "",
+    "romaji": "Gomen",
+    "ca": "Sorry"
+  },
+  {
+    "jp": "ごめんなさい",
+    "kana": "",
+    "romaji": "Gomennasai",
+    "ca": "I'm sorry"
+  },
+  {
+    "jp": "はじめまして",
+    "kana": "",
+    "romaji": "hajimemashite",
+    "ca": "Nice to meet you"
+  },
+  {
+    "jp": "はる",
+    "kana": "",
+    "romaji": "haru",
+    "ca": "Spring"
+  },
+  {
+    "jp": "はっさい",
+    "kana": "",
+    "romaji": "hassai",
+    "ca": "8 years old"
+  },
+  {
+    "jp": "はたち",
+    "kana": "",
+    "romaji": "hatachi",
+    "ca": "20 years old"
+  },
+  {
+    "jp": "へび",
+    "kana": "",
+    "romaji": "hebi",
+    "ca": "Snake"
+  },
+  {
+    "jp": "へや",
+    "kana": "",
+    "romaji": "heya",
+    "ca": "Room"
+  },
+  {
+    "jp": "ひだり",
+    "kana": "",
+    "romaji": "hidari",
+    "ca": "Left"
+  },
+  {
+    "jp": "ほん",
+    "kana": "",
+    "romaji": "hon",
+    "ca": "Book"
+  },
+  {
+    "jp": "ほし",
+    "kana": "",
+    "romaji": "hoshi",
+    "ca": "Star"
+  },
+  {
+    "jp": "ほたる",
+    "kana": "",
+    "romaji": "hotaru",
+    "ca": "Cuca de llum"
+  },
+  {
+    "jp": "いちご",
+    "kana": "",
+    "romaji": "ichigo",
+    "ca": "Strawberry"
+  },
+  {
+    "jp": "いちねんせい",
+    "kana": "",
+    "romaji": "ichinensee",
+    "ca": "First-year student"
+  },
+  {
+    "jp": "いま",
+    "kana": "",
+    "romaji": "ima",
+    "ca": "Now"
+  },
+  {
+    "jp": "インド",
+    "kana": "",
+    "romaji": "indo",
+    "ca": "India"
+  },
+  {
+    "jp": "いしゃ",
+    "kana": "",
+    "romaji": "isha",
+    "ca": "Doctor"
+  },
+  {
+    "jp": "いっさい",
+    "kana": "",
+    "romaji": "issai",
+    "ca": "1 year old"
+  },
+  {
+    "jp": "いただきます",
+    "kana": "",
+    "romaji": "itadakimasu",
+    "ca": "Than you for the meal"
+  },
+  {
+    "jp": "いってきます",
+    "kana": "",
+    "romaji": "ittekimasu",
+    "ca": "I'm going out now. See you later."
+  },
+  {
+    "jp": "いってらっしゃい",
+    "kana": "",
+    "romaji": "itterasshai",
+    "ca": "See you when you get back"
+  },
+  {
+    "jp": "じゃ、また（あした）",
+    "kana": "じゃ、また（あした）",
+    "romaji": "ja, mata (ashita)",
+    "ca": "See you later; See you (tomorrow)",
+    "reg": "hon"
+  },
+  {
+    "jp": "じゃないです",
+    "kana": "",
+    "romaji": "janaidesu",
+    "ca": "Negative"
+  },
+  {
+    "jp": "じかん",
+    "kana": "",
+    "romaji": "jikan",
+    "ca": "Time"
+  },
+  {
+    "jp": "ジョギング",
+    "kana": "",
+    "romaji": "jogingu",
+    "ca": "Jogging"
+  },
+  {
+    "jp": "じゅうはっさい",
+    "kana": "",
+    "romaji": "juuhassai",
+    "ca": "18 years old"
+  },
+  {
+    "jp": "かいしゃいん",
+    "kana": "",
+    "romaji": "kaishain",
+    "ca": "Company employee"
+  },
+  {
+    "jp": "かいわ",
+    "kana": "",
+    "romaji": "kaiwa",
+    "ca": "Conversation"
+  },
+  {
+    "jp": "かんこく",
+    "kana": "",
+    "romaji": "kankoku",
+    "ca": "South Korea"
+  },
+  {
+    "jp": "けしゴム",
+    "kana": "",
+    "romaji": "keshigomu",
+    "ca": "Eraser"
+  },
+  {
+    "jp": "きてください",
+    "kana": "",
+    "romaji": "kitekudasai",
+    "ca": "Please come (here)"
+  },
+  {
+    "jp": "きってください",
+    "kana": "",
+    "romaji": "kittekudasai",
+    "ca": "Please cut"
+  },
+  {
+    "jp": "こちら",
+    "kana": "",
+    "romaji": "kochira",
+    "ca": "this person"
+  },
+  {
+    "jp": "こちらこそ",
+    "kana": "",
+    "romaji": "kochirakoso",
+    "ca": "Likewise"
+  },
+  {
+    "jp": "こんばんは",
+    "kana": "",
+    "romaji": "Konbanwa",
+    "ca": "Good evening"
+  },
+  {
+    "jp": "今日は",
+    "kana": "こんにちは",
+    "romaji": "konnichiwa",
+    "ca": "hello, good afternoon"
+  },
+  {
+    "jp": "コンピュータ",
+    "kana": "",
+    "romaji": "konpyuuta",
+    "ca": "Computer"
+  },
+  {
+    "jp": "こうがく",
+    "kana": "",
+    "romaji": "koogaku",
+    "ca": "Engineering"
+  },
+  {
+    "jp": "クラシック",
+    "kana": "",
+    "romaji": "kurashikku",
+    "ca": "Classic music"
+  },
+  {
+    "jp": "まんが",
+    "kana": "",
+    "romaji": "manga",
+    "ca": "Comic book"
+  },
+  {
+    "jp": "まんなか",
+    "kana": "",
+    "romaji": "mannaka",
+    "ca": "Center, middle"
+  },
+  {
+    "jp": "マレーシア",
+    "kana": "",
+    "romaji": "mareeshia",
+    "ca": "Malaysia"
+  },
+  {
+    "jp": "まる",
+    "kana": "",
+    "romaji": "maru",
+    "ca": "Point"
+  },
+  {
+    "jp": "みぎ",
+    "kana": "",
+    "romaji": "migi",
+    "ca": "Right"
+  },
+  {
+    "jp": "水",
+    "kana": "みず",
+    "romaji": "mizu",
+    "ca": "water"
+  },
+  {
+    "jp": "なに",
+    "kana": "",
+    "romaji": "nani",
+    "ca": "What"
+  },
+  {
+    "jp": "なんねんせい",
+    "kana": "",
+    "romaji": "nannensee",
+    "ca": "What year in school?"
+  },
+  {
+    "jp": "なんにん",
+    "kana": "",
+    "romaji": "nannin",
+    "ca": "How many people"
+  },
+  {
+    "jp": "猫",
+    "kana": "ねこ",
+    "romaji": "neko",
+    "ca": "cat"
+  },
+  {
+    "jp": "にほん",
+    "kana": "",
+    "romaji": "nihon",
+    "ca": "Japan"
+  },
+  {
+    "jp": "にほんご",
+    "kana": "",
+    "romaji": "nihongo",
+    "ca": "Japanese"
+  },
+  {
+    "jp": "日本語",
+    "kana": "にほんご",
+    "romaji": "nihongo",
+    "ca": "Japanese (language)"
+  },
+  {
+    "jp": "にほんじん",
+    "kana": "",
+    "romaji": "nihonjin",
+    "ca": "Japanese"
+  },
+  {
+    "jp": "にねんせい",
+    "kana": "",
+    "romaji": "ninensee",
+    "ca": "Second-year student"
+  },
+  {
+    "jp": "おばあさん",
+    "kana": "",
+    "romaji": "obaasan",
+    "ca": "Grandmother; old woman"
+  },
+  {
+    "jp": "おばさん",
+    "kana": "",
+    "romaji": "obasan",
+    "ca": "Aunt; middle-aged woman"
+  },
+  {
+    "jp": "おはよお(ございます）",
+    "kana": "",
+    "romaji": "ohayoo",
+    "ca": "Good morning",
+    "reg": "hon"
+  },
+  {
+    "jp": "おかあさん",
+    "kana": "",
+    "romaji": "okaasan",
+    "ca": "Mother"
+  },
+  {
+    "jp": "おめでとう (ございます）",
+    "kana": "",
+    "romaji": "Omedetou (Gozaimasu)",
+    "ca": "Congratulations!"
+  },
+  {
+    "jp": "おねがいします",
+    "kana": "",
+    "romaji": "Onegai shimasu",
+    "ca": "Please do me a favor"
+  },
+  {
+    "jp": "おんがく",
+    "kana": "",
+    "romaji": "ongaku",
+    "ca": "Music"
+  },
+  {
+    "jp": "おにいさん",
+    "kana": "",
+    "romaji": "oniisan",
+    "ca": "Older brother"
+  },
+  {
+    "jp": "おうじ",
+    "kana": "",
+    "romaji": "ooji",
+    "ca": "Prince"
+  },
+  {
+    "jp": "おおきい",
+    "kana": "",
+    "romaji": "ookii",
+    "ca": "Big"
+  },
+  {
+    "jp": "オーストラリア",
+    "kana": "",
+    "romaji": "oosutoraria",
+    "ca": "Australia"
+  },
+  {
+    "jp": "おとうさん",
+    "kana": "",
+    "romaji": "Otoosan",
+    "ca": "Father"
+  },
+  {
+    "jp": "おやすみ (なさい)",
+    "kana": "",
+    "romaji": "oyasumi (nasai)",
+    "ca": "Good night",
+    "reg": "hon"
+  },
+  {
+    "jp": "りんご",
+    "kana": "",
+    "romaji": "ringo",
+    "ca": "Apple"
+  },
+  {
+    "jp": "ロック",
+    "kana": "",
+    "romaji": "rokku",
+    "ca": "Rock"
+  },
+  {
+    "jp": "ろく",
+    "kana": "",
+    "romaji": "roku",
+    "ca": "Six"
+  },
+  {
+    "jp": "りゅうがくせい",
+    "kana": "",
+    "romaji": "ryuugakusee",
+    "ca": "International student"
+  },
+  {
+    "jp": "さかな",
+    "kana": "",
+    "romaji": "sakana",
+    "ca": "Fish"
+  },
+  {
+    "jp": "さん",
+    "kana": "",
+    "romaji": "san",
+    "ca": "Three"
+  },
+  {
+    "jp": "さんねんせい",
+    "kana": "",
+    "romaji": "sannensee",
+    "ca": "Third-year student"
+  },
+  {
+    "jp": "左様なら",
+    "kana": "さようなら",
+    "romaji": "sayoonara",
+    "ca": "Goodbye"
+  },
+  {
+    "jp": "せいじ",
+    "kana": "",
+    "romaji": "seeji",
+    "ca": "Politics"
+  },
+  {
+    "jp": "せんこう",
+    "kana": "",
+    "romaji": "senkoo",
+    "ca": "Major subject; special study"
+  },
+  {
+    "jp": "せんぷうき",
+    "kana": "",
+    "romaji": "senpuuki",
+    "ca": "Electric fun"
+  },
+  {
+    "jp": "先生",
+    "kana": "せんせい",
+    "romaji": "sensee",
+    "ca": "teacher"
+  },
+  {
+    "jp": "しごと",
+    "kana": "",
+    "romaji": "shigoto",
+    "ca": "Work; job"
+  },
+  {
+    "jp": "しんごう",
+    "kana": "",
+    "romaji": "shingoo",
+    "ca": "Traffic light"
+  },
+  {
+    "jp": "しんかんせん",
+    "kana": "",
+    "romaji": "shinkansen",
+    "ca": "Bullet train"
+  },
+  {
+    "jp": "失礼します",
+    "kana": "しつれいします",
+    "romaji": "Shitsuree Shimasu",
+    "ca": "Excuse me, goodbye",
+    "reg": "hon"
+  },
+  {
+    "jp": "しゅくだい",
+    "kana": "",
+    "romaji": "shukudai",
+    "ca": "Homework"
+  },
+  {
+    "jp": "しゅみ",
+    "kana": "",
+    "romaji": "shumi",
+    "ca": "Hobby"
+  },
+  {
+    "jp": "しゅっしん",
+    "kana": "",
+    "romaji": "shusshin",
+    "ca": "Plcae of origin"
+  },
+  {
+    "jp": "そうじ",
+    "kana": "",
+    "romaji": "sooji",
+    "ca": "Cleaning"
+  },
+  {
+    "jp": "そら",
+    "kana": "",
+    "romaji": "sora",
+    "ca": "Sky"
+  },
+  {
+    "jp": "それから",
+    "kana": "",
+    "romaji": "sorekara",
+    "ca": "Moreover"
+  },
+  {
+    "jp": "すき",
+    "kana": "",
+    "romaji": "suki",
+    "ca": "Like"
+  },
+  {
+    "jp": "スマホ",
+    "kana": "",
+    "romaji": "sumaho",
+    "ca": "Smartphone"
+  },
+  {
+    "jp": "すみません",
+    "kana": "",
+    "romaji": "Sumimasen",
+    "ca": "Sorry / I accept it"
+  },
+  {
+    "jp": "スポーツ",
+    "kana": "",
+    "romaji": "supootsu",
+    "ca": "Sports"
+  },
+  {
+    "jp": "すし",
+    "kana": "",
+    "romaji": "sushi",
+    "ca": "Sushi"
+  },
+  {
+    "jp": "すうがく",
+    "kana": "",
+    "romaji": "suugaku",
+    "ca": "Mathematics"
+  },
+  {
+    "jp": "食べる",
+    "kana": "たべる",
+    "romaji": "taberu",
+    "ca": "to eat"
+  },
+  {
+    "jp": "ただいま",
+    "kana": "",
+    "romaji": "tadaima",
+    "ca": "I'm back"
+  },
+  {
+    "jp": "たくさん",
+    "kana": "",
+    "romaji": "takusan",
+    "ca": "Many; a lot"
+  },
+  {
+    "jp": "たまご",
+    "kana": "",
+    "romaji": "tamago",
+    "ca": "Egg"
+  },
+  {
+    "jp": "てん",
+    "kana": "",
+    "romaji": "ten",
+    "ca": "Coma"
+  },
+  {
+    "jp": "てんぷら",
+    "kana": "",
+    "romaji": "tenpura",
+    "ca": "Tempura"
+  },
+  {
+    "jp": "ともだち",
+    "kana": "",
+    "romaji": "tomodachi",
+    "ca": "Friend"
+  },
+  {
+    "jp": "つき",
+    "kana": "",
+    "romaji": "tsuki",
+    "ca": "Night"
+  },
+  {
+    "jp": "うえ",
+    "kana": "",
+    "romaji": "ue",
+    "ca": "Lie"
+  },
+  {
+    "jp": "うた",
+    "kana": "",
+    "romaji": "uta",
+    "ca": "Song"
+  },
+  {
+    "jp": "やま",
+    "kana": "",
+    "romaji": "yama",
+    "ca": "Mountain"
+  },
+  {
+    "jp": "山",
+    "kana": "やま",
+    "romaji": "yama",
+    "ca": "mountain"
+  },
+  {
+    "jp": "やすみ",
+    "kana": "",
+    "romaji": "yasumi",
+    "ca": "Break; day off"
+  },
+  {
+    "jp": "よん",
+    "kana": "",
+    "romaji": "yon",
+    "ca": "Four"
+  },
+  {
+    "jp": "よねんせい",
+    "kana": "",
+    "romaji": "yonensee",
+    "ca": "Fourth-year student"
+  },
+  {
+    "jp": "よる",
+    "kana": "",
+    "romaji": "yoru",
+    "ca": "Night"
+  },
+  {
+    "jp": "ゆめ",
+    "kana": "",
+    "romaji": "yume",
+    "ca": "Dream"
+  }
+]

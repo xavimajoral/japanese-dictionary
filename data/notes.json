@@ -1,0 +1,251 @@
+[
+  {
+    "type": "frase",
+    "at": 1792590709971,
+    "jp": "わたしはえいががすきです.\nどくしょ",
+    "romaji": "watashi wa eiga ga sukidesu",
+    "ca": "I like movies"
+  },
+  {
+    "type": "frase",
+    "at": 1792590286322,
+    "jp": "いいえ、ちがいます",
+    "romaji": "iie, chigaimasu",
+    "ca": "Nope. No és així (equivalent janaidesu)"
+  },
+  {
+    "type": "frase",
+    "at": 1792590137415,
+    "jp": "カタルにゃからきました",
+    "romaji": "katarunya kara kimashita",
+    "ca": "I'm coming from Catalonia"
+  },
+  {
+    "type": "frase",
+    "at": 1792589934206,
+    "jp": "＿は＿が　（だい）すきです",
+    "romaji": "＿wa＿ga（dai) sukidesu",
+    "ca": "I like (a lot) this ＿"
+  },
+  {
+    "type": "frase",
+    "at": 1792423352010,
+    "jp": "(いいえ)、まだです",
+    "kana": "(いいえ)、まだです",
+    "romaji": "iie, mada desu",
+    "group": "Useful phrases in class",
+    "ca": "Not yet"
+  },
+  {
+    "type": "frase",
+    "at": 1792423285686,
+    "jp": "できましたか",
+    "kana": "できましたか",
+    "romaji": "dekimashitaka",
+    "group": "Useful phrases in class",
+    "ca": "Have you finished?"
+  },
+  {
+    "type": "frase",
+    "at": 1792396406491,
+    "jp": "わかりました",
+    "kana": "わかりました",
+    "romaji": "wakarimashita",
+    "group": "Useful phrases in class",
+    "ca": "I understood. I got it"
+  },
+  {
+    "type": "frase",
+    "at": 1792396358183,
+    "jp": "そうですか。",
+    "kana": "そうですか。",
+    "romaji": "soo desu ka.",
+    "group": "Useful phrases in class",
+    "ca": "I see"
+  },
+  {
+    "type": "frase",
+    "at": 1792396114812,
+    "jp": "(Pencil)は人本語で鉛筆です",
+    "kana": "(Pencil)はにんほんごでえんぴつです",
+    "romaji": "(Pencil) wa ninhongo de enpitsu desu",
+    "group": "Useful phrases in class",
+    "ca": "\"Pencil\" is \"enpitsu\" in Japanese"
+  },
+  {
+    "type": "frase",
+    "at": 1792396017633,
+    "jp": "(Pencil)は人本語でなんですか。",
+    "kana": "はにんほんごでなんですか。",
+    "romaji": "(Pencil) wa ninhongode nandesuka.",
+    "group": "Useful phrases in class",
+    "ca": "What is \"pencil\" in Japanese?"
+  },
+  {
+    "type": "frase",
+    "at": 1792395906873,
+    "jp": "カノー先生、質問があります",
+    "kana": "かのーせんせい、しつもんがあります",
+    "romaji": "kano-sensee, shitsumon ga arimasu",
+    "group": "Useful phrases in class",
+    "ca": "Prof. Kano, I have a question"
+  },
+  {
+    "type": "frase",
+    "at": 1792395855782,
+    "jp": "はい、わかります。",
+    "kana": "はい、わかります。",
+    "romaji": "hai, wakarimasu.",
+    "group": "Useful phrases in class",
+    "ca": "Yes, I understand"
+  },
+  {
+    "type": "frase",
+    "at": 1792395814893,
+    "jp": "わかりますか。",
+    "kana": "わかりますか。",
+    "romaji": "wakarimasu ka.",
+    "group": "Useful phrases in class",
+    "ca": "Do you understand?"
+  },
+  {
+    "type": "frase",
+    "at": 1792395312061,
+    "jp": "ゆっくり",
+    "kana": "ゆっくり",
+    "romaji": "yukkuri",
+    "group": "aula",
+    "ca": "(moe) slowly"
+  },
+  {
+    "type": "frase",
+    "at": 1792395279546,
+    "jp": "多き声で",
+    "kana": "おおきこえで",
+    "romaji": "ooki koe de",
+    "group": "aula",
+    "ca": "in a loud(er) voice"
+  },
+  {
+    "type": "frase",
+    "at": 1792395196912,
+    "jp": "もう一度",
+    "kana": "もういちど",
+    "romaji": "moo ichido",
+    "group": "aula",
+    "ca": "one more time"
+  },
+  {
+    "type": "frase",
+    "at": 1792395108481,
+    "jp": "聞いてください",
+    "kana": "きいてください",
+    "romaji": "kiite kudasai",
+    "group": "aula",
+    "ca": "Please speak"
+  },
+  {
+    "type": "frase",
+    "at": 1792395060778,
+    "jp": "話してください",
+    "kana": "はなしてください",
+    "romaji": "hanasite kudasai",
+    "group": "aula",
+    "ca": "Please speak"
+  },
+  {
+    "type": "frase",
+    "at": 1792395024179,
+    "jp": "読んでください",
+    "kana": "よんでください",
+    "romaji": "yonde kudasai",
+    "group": "aula",
+    "ca": "Please read (aloud)"
+  },
+  {
+    "type": "frase",
+    "at": 1792394950684,
+    "jp": "書いてください",
+    "kana": "かいてください",
+    "romaji": "kaite kudasai",
+    "group": "aula",
+    "ca": "Please write"
+  },
+  {
+    "type": "frase",
+    "at": 1792350578251,
+    "jp": "見てください",
+    "kana": "みてください",
+    "romaji": "mite kudasai",
+    "group": "aula",
+    "ca": "Please look"
+  },
+  {
+    "type": "frase",
+    "at": 1792350527127,
+    "jp": "言ってください",
+    "kana": "いってください",
+    "romaji": "itte kudasai",
+    "group": "aula",
+    "ca": "Please say it"
+  },
+  {
+    "type": "frase",
+    "at": 1792350213423,
+    "jp": "スミスさんは　なんねんせいですか。",
+    "romaji": "Sumisu-san wa nannensee desu ka.",
+    "ca": "What year in school are you, Smith-san"
+  },
+  {
+    "type": "frase",
+    "at": 1791830495367,
+    "jp": "おはようございます",
+    "kana": "おはようございます",
+    "romaji": "ohayoo gozaimasu",
+    "ca": "Good morning",
+    "reg": "hon"
+  },
+  {
+    "type": "gram",
+    "at": 1791830343470,
+    "title": "Particle は (topic)",
+    "jp": "A は B です",
+    "body": "は marks the topic of the sentence: “as for A, it is B”. As a particle it is pronounced “wa”, not “ha”.\nです works as the polite verb “to be” and goes at the end of the sentence.",
+    "examples": [
+      {
+        "jp": "わたしはがくせいです。",
+        "ca": "I am a student."
+      },
+      {
+        "jp": "これはねこです。",
+        "ca": "This is a cat."
+      }
+    ]
+  },
+  {
+    "type": "frase",
+    "at": 1791830343469,
+    "jp": "日本語を勉強しています。",
+    "kana": "にほんごをべんきょうしています。",
+    "romaji": "nihongo o benkyō shite imasu.",
+    "ca": "I am studying Japanese.",
+    "body": "〜ています expresses an action in progress."
+  },
+  {
+    "type": "gram",
+    "at": 1791830343468,
+    "title": "Particle の (possession)",
+    "jp": "A の B",
+    "body": "の joins two nouns: “A's B”. The order is the same as with the English 's.",
+    "examples": [
+      {
+        "jp": "せんせいのほん",
+        "ca": "the teacher's book"
+      },
+      {
+        "jp": "にほんのやま",
+        "ca": "the mountains of Japan"
+      }
+    ]
+  }
+]

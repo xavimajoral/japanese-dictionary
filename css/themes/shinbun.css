@@ -1,0 +1,70 @@
+/* "Newsprint" (新聞): a broadsheet. Off-white newsprint with a halftone screen, black ink, one spot red, square
+   corners everywhere, hard offset shadows, double rules under the masthead and a Shippori Mincho headline.
+   Loaded after style.css; keep its three colour blocks in sync. */
+@import url("https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@500;700;800&family=Zen+Kaku+Gothic+New:wght@400;500;700&display=swap");
+
+:root {
+  --bg: #ECE7DA; --bg-hi: #F4F0E5; --panel: #F7F3E9; --paper: #FFFDF7; --ink: #161412; --ink-soft: #57514A;
+  --rule: #2A2620; --guide: #CBC2B0; --ghost: #E2DCCD; --accent: #D0241C; --accent-ink: #FFFFFF;
+  --accent-soft: #F5D8D2; --primary: #161412; --primary-ink: #FFFDF7; --hover: #EFE9DA; --danger: #C21E1E;
+  --honor: #C21E1E; --honor-soft: #F5D6D2; --casual: #1F5FA8; --casual-soft: #DAE4F1;
+  --mint: #8FBFA6; --lemon: #EFD36A; --lilac: #C9C6DD; --pattern: #8A8172;
+  --g0: #F2D9D4; --g1: #D9E2EE; --g2: #D8E7DC; --g3: #F0E5BE; --g4: #E0DCEA; --g5: #EEDCC8; --g6: #D4E6E6; --g7: #E8DADF;
+  --shadow: 4px 4px 0 var(--ink); --grain: .3;
+  --r: 0px; --r-sm: 0px; --r-cell: 0px; --pill: 0px;
+  --font-jp: "Shippori Mincho", "Hiragino Mincho ProN", "Yu Mincho", serif;
+  --font-ui: "Zen Kaku Gothic New", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-pop: "Shippori Mincho", "Hiragino Mincho ProN", serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #161513; --bg-hi: #1E1C19; --panel: #1B1A17; --paper: #22201C; --ink: #EDE7D9; --ink-soft: #A49D8F;
+    --rule: #8A8476; --guide: #4A463E; --ghost: #2E2B26; --accent: #FF5A4E; --accent-ink: #170807;
+    --accent-soft: #3E1A16; --primary: #EDE7D9; --primary-ink: #161513; --hover: #27251F; --danger: #FF7A6E;
+    --honor: #FF7A6E; --honor-soft: #3E1E1A; --casual: #7FB0EA; --casual-soft: #1C2A3E;
+    --mint: #4E8068; --lemon: #8C7E44; --lilac: #3E3C52; --pattern: #5A554B;
+    --g0: #46302C; --g1: #263548; --g2: #26402F; --g3: #48401F; --g4: #363350; --g5: #4A3626; --g6: #23413F; --g7: #44303A;
+    --shadow: 4px 4px 0 #000; --grain: .4;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #161513; --bg-hi: #1E1C19; --panel: #1B1A17; --paper: #22201C; --ink: #EDE7D9; --ink-soft: #A49D8F;
+  --rule: #8A8476; --guide: #4A463E; --ghost: #2E2B26; --accent: #FF5A4E; --accent-ink: #170807;
+  --accent-soft: #3E1A16; --primary: #EDE7D9; --primary-ink: #161513; --hover: #27251F; --danger: #FF7A6E;
+  --honor: #FF7A6E; --honor-soft: #3E1E1A; --casual: #7FB0EA; --casual-soft: #1C2A3E;
+  --mint: #4E8068; --lemon: #8C7E44; --lilac: #3E3C52; --pattern: #5A554B;
+  --g0: #46302C; --g1: #263548; --g2: #26402F; --g3: #48401F; --g4: #363350; --g5: #4A3626; --g6: #23413F; --g7: #44303A;
+  --shadow: 4px 4px 0 #000; --grain: .4;
+}
+body { background: var(--bg); }
+/* Halftone screen. */
+body::before {
+  -webkit-mask: radial-gradient(circle, #000 .9px, transparent 1.2px) 0 0 / 6px 6px;
+  mask: radial-gradient(circle, #000 .9px, transparent 1.2px) 0 0 / 6px 6px;
+}
+/* The seal is a square red hanko, upright. */
+.seal {
+  width: 64px; height: 64px; margin-top: 0; border-radius: 0; transform: none; animation: none;
+  font: 800 18px/1.05 var(--font-jp); writing-mode: vertical-rl; letter-spacing: .1em;
+  box-shadow: inset 0 0 0 3px var(--accent), inset 0 0 0 5px var(--accent-ink);
+}
+.seal::before, .seal::after, .titles::after { display: none; }
+.eyebrow { color: var(--ink); letter-spacing: .5em; }
+h1 { font-weight: 800; letter-spacing: 0; text-shadow: none; font-size: clamp(32px, 5.4vw, 52px); line-height: 1.05; }
+.lede { font-style: italic; }
+/* Masthead double rule. */
+header.top::after { height: 6px; background: none; border-top: 3px solid var(--ink); border-bottom: 1px solid var(--ink); }
+.label { color: var(--ink); }
+.kan { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
+.tab[aria-selected="true"] { background: var(--ink); color: var(--paper); }
+.tab[aria-selected="true"] .kan { background: var(--accent); color: var(--accent-ink); }
+.btn { box-shadow: 3px 3px 0 var(--rule); }
+.btn:active:not(:disabled) { transform: translate(3px, 3px); }
+.btn.primary { background: var(--primary); box-shadow: 3px 3px 0 var(--accent); letter-spacing: .14em; text-transform: uppercase; }
+.btn.primary:hover:not(:disabled) { background: var(--accent); color: var(--accent-ink); filter: none; box-shadow: 3px 3px 0 var(--primary); }
+.cell svg { box-shadow: 2px 2px 0 var(--rule); }
+.backup summary .label::after { content: "＋"; color: var(--ink); }
+.backup[open] summary .label::after { content: "－"; color: var(--accent); }
+footer p::before { content: "■ "; color: var(--accent); }
+.fab { box-shadow: 4px 4px 0 var(--accent); }
+@media (max-width: 520px) { .seal { width: 52px; height: 52px; font-size: 15px; } }

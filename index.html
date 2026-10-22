@@ -9,6 +9,9 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Kiwi+Maru:wght@400;500&family=Mochiy+Pop+One&family=Zen+Maru+Gothic:wght@400;500;700&family=DM+Mono:wght@400;500&display=swap">
 <link rel="stylesheet" href="css/style.css">
+<!-- Themes, CSS Zen Garden style: one markup, one stylesheet per design. style.css is the base "Sakura" design; the
+     saved theme's css/themes/<name>.css is linked after it here, before first paint. The choices are #themeSel's options. -->
+<script>try { var s = localStorage.getItem("diccionari-japones-estil"); if (s && s !== "sakura" && /^[a-z]+$/.test(s)) { document.documentElement.dataset.style = s; document.write('<link rel="stylesheet" href="css/themes/' + s + '.css" data-skin="' + s + '">'); } } catch (e) { /* ignore */ }</script>
 </head>
 <body>
 <div class="wrap">
@@ -19,6 +22,17 @@
       <h1>Curs de Japonès</h1>
       <p class="lede">Course vocabulary and notes, with the stroke order of every kana and kanji.</p>
     </div>
+    <label class="themepick" title="Change the look of the app">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3a9 9 0 1 0 0 18c1.1 0 1.7-.8 1.7-1.7 0-.5-.2-.9-.5-1.2-.3-.3-.5-.7-.5-1.2 0-.9.8-1.7 1.7-1.7H16a5 5 0 0 0 5-5c0-4-4-7.2-9-7.2z"/><circle cx="7.5" cy="11.5" r="1" fill="currentColor"/><circle cx="10.5" cy="7.5" r="1" fill="currentColor"/><circle cx="15.5" cy="8" r="1" fill="currentColor"/></svg>
+      <span>Theme</span>
+      <select id="themeSel">
+        <option value="sakura">Sakura</option>
+        <option value="sumi">Sumi</option>
+        <option value="matcha">Matcha</option>
+        <option value="neon">Neon</option>
+        <option value="shinbun">Newsprint</option>
+      </select>
+    </label>
   </header>
 
   <nav class="tabs" id="tabs" role="tablist" aria-label="Sections">
@@ -103,7 +117,11 @@
       </div>
       <div class="status" id="status" aria-live="polite"></div>
 
+      <dialog class="addpop" id="addDlg" aria-labelledby="fHead">
       <form class="add" id="form" autocomplete="off" novalidate>
+        <button type="button" class="del pclose" id="fClose" aria-label="Close" title="Close">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+        </button>
         <h2 class="label"><span class="kan" lang="ja" aria-hidden="true" id="fKan">追加</span><span id="fHead">Add a word</span></h2>
         <div class="fields">
           <div class="field"><label for="fJp">Japanese</label>
@@ -126,7 +144,7 @@
               <label title="Casual speech with friends and family (タメ口)"><input type="radio" name="freg" value="cas"><span>Casual</span></label>
             </div>
           </div>
-          <div class="fbtns"><button type="submit" class="btn primary" id="fSubmit">Add</button><button type="button" class="btn" id="fCancel" hidden>Cancel</button></div>
+          <div class="fbtns"><button type="submit" class="btn primary" id="fSubmit">Add</button><button type="button" class="btn" id="fCancel">Cancel</button></div>
         </div>
         <div class="sugg" id="sugg" hidden>
           <span class="sugg-label">Suggestions</span>
@@ -134,6 +152,7 @@
         </div>
         <p class="hint" id="hint"></p>
       </form>
+      </dialog>
 
       <details class="backup">
         <summary><span class="label"><span class="kan" lang="ja" aria-hidden="true">保存</span>Backup</span></summary>
@@ -144,6 +163,11 @@
             <button type="button" class="btn" id="bCopy">Copy</button>
             <button type="button" class="btn" id="bLoad">Load</button>
             <span class="hint" id="backupMsg" aria-live="polite"></span>
+          </div>
+          <div class="row link" hidden>
+            <button type="button" class="btn link-pick">Auto-save to folder…</button>
+            <button type="button" class="btn link-stop" hidden>Stop</button>
+            <span class="hint link-msg" aria-live="polite"></span>
           </div>
         </div>
       </details>
@@ -157,6 +181,7 @@
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5L20 20"/></svg>
           <input type="search" id="nQ" placeholder="Search notes" aria-label="Search notes" autocomplete="off">
         </div>
+        <button type="button" class="btn primary" id="nNew"><span class="kan" lang="ja" aria-hidden="true">記入</span>New note</button>
       </div>
       <div class="chips" id="chips" role="group" aria-label="Filter by type">
         <button type="button" class="chip" data-f="all" aria-pressed="true">All <span class="n"></span></button>
@@ -179,11 +204,20 @@
             <button type="button" class="btn" id="nLoad">Load</button>
             <span class="hint" id="nBackupMsg" aria-live="polite"></span>
           </div>
+          <div class="row link" hidden>
+            <button type="button" class="btn link-pick">Auto-save to folder…</button>
+            <button type="button" class="btn link-stop" hidden>Stop</button>
+            <span class="hint link-msg" aria-live="polite"></span>
+          </div>
         </div>
       </details>
     </main>
 
-    <section class="composer" id="composer" aria-labelledby="cTitle">
+    <dialog class="notepop" id="noteDlg" aria-labelledby="cTitle">
+    <section class="composer" id="composer">
+      <button type="button" class="del pclose" id="nClose" aria-label="Close" title="Close">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+      </button>
       <h2 class="label" id="cTitle"><span class="kan" lang="ja" aria-hidden="true">記入</span><span id="cTitleText">New note</span></h2>
       <form id="nForm" autocomplete="off" novalidate>
         <div class="seg" role="radiogroup" aria-label="Note type">
@@ -193,14 +227,14 @@
           <label><input type="radio" name="ntype" value="nota"><span>Note</span></label>
         </div>
         <div class="field" data-for="gram dibuix nota"><label for="nTitle">Title</label><input type="text" id="nTitle"></div>
-        <div class="field" data-for="gram frase"><label for="nJp" id="nJpLabel">Pattern</label><input type="text" id="nJp" class="jpin" lang="ja"></div>
+        <div class="field" data-for="gram frase"><label for="nJp" id="nJpLabel">Pattern</label><textarea id="nJp" class="jpin line" lang="ja" rows="1"></textarea></div>
         <div class="field" data-for="frase"><label for="nKa">Furigana</label>
-          <div class="inrow"><input type="text" id="nKa" class="jpin" lang="ja" placeholder="にほんごをべんきょうしています。"><button type="button" class="btn kanji" id="nKan" lang="ja" title="Fill in the Japanese sentence with kanji from the furigana" aria-label="Convert the furigana to kanji">漢字</button></div>
+          <div class="inrow"><textarea id="nKa" class="jpin line" lang="ja" rows="1" placeholder="にほんごをべんきょうしています。"></textarea><button type="button" class="btn kanji" id="nKan" lang="ja" title="Fill in the Japanese sentence with kanji from the furigana" aria-label="Convert the furigana to kanji">漢字</button></div>
         </div>
         <div class="field" data-for="frase"><label for="nRo">Romaji</label>
-          <div class="inrow"><input type="text" id="nRo" placeholder="nihongo o benkyō shite imasu."><button type="button" class="btn" id="nGen" title="Fill in the Japanese sentence and the furigana from the romaji">Generate</button></div>
+          <div class="inrow"><textarea id="nRo" class="line" rows="1" placeholder="nihongo o benkyō shite imasu."></textarea><button type="button" class="btn" id="nGen" title="Fill in the Japanese sentence and the furigana from the romaji">Generate</button></div>
         </div>
-        <div class="field" data-for="frase"><label for="nCa">English</label><input type="text" id="nCa" placeholder="I am studying Japanese."></div>
+        <div class="field" data-for="frase"><label for="nCa">English</label><textarea id="nCa" class="line" rows="1" placeholder="I am studying Japanese."></textarea></div>
         <div class="field" data-for="frase"><label for="nGroup">Group</label><div class="inrow"><select id="nGroup"></select><button type="button" class="btn" id="nGrpRen" title="Rename this group" hidden>Rename</button><button type="button" class="btn" id="nGrpDel" title="Delete this group (its sentences move to Other)" hidden>Delete</button></div>
           <div class="inrow" id="nGrpNew" hidden><input type="text" id="nGrpName" maxlength="40" placeholder="Name of the new group" aria-label="Name of the new group"><button type="button" class="btn" id="nGrpAdd">Add</button></div>
         </div>
@@ -237,11 +271,12 @@
         <div class="field" data-for="gram"><label for="nEx">Examples</label><textarea id="nEx" class="jpin" lang="ja" placeholder="わたしはがくせいです。 = I am a student."></textarea></div>
         <div class="row">
           <button type="submit" class="btn primary" id="nSave">Save note</button>
-          <button type="button" class="btn" id="nCancel" hidden>Cancel</button>
+          <button type="button" class="btn" id="nCancel">Cancel</button>
         </div>
         <p class="hint" id="nHint"></p>
       </form>
     </section>
+    </dialog>
   </div>
 
   <footer>

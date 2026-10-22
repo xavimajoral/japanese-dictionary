@@ -1,0 +1,58 @@
+/* "Sumi": a calmer, neutral look. Washi paper with a fine dot grid, indigo-charcoal ink, a vermilion hanko
+   accent, indigo buttons, squarer panels, Zen Kaku Gothic instead of the rounded fonts, and no cat ears, hearts
+   or sparkles. Loaded after style.css; keep its three colour blocks in sync. */
+@import url("https://fonts.googleapis.com/css2?family=Zen+Kaku+Gothic+New:wght@400;500;700&display=swap");
+
+:root {
+  --bg: #F1EEE7; --bg-hi: #F8F6F1; --panel: #FAF8F4; --paper: #FFFFFF; --ink: #1F2A36; --ink-soft: #5E6875;
+  --rule: #DAD5CB; --guide: #C6BFB0; --ghost: #E8E4DC; --accent: #B23A2A; --accent-ink: #FFFFFF;
+  --accent-soft: #F3DDD7; --primary: #2E4A6E; --primary-ink: #FFFFFF; --hover: #EEEAE2; --danger: #B0302A;
+  --honor: #B8323A; --honor-soft: #F5DCDD; --casual: #2F6FB3; --casual-soft: #DCE8F5;
+  --mint: #9CC7B8; --lemon: #E6D7A3; --lilac: #D5DCE6; --pattern: #A39B8B;
+  --g0: #F0DCD6; --g1: #D6E1EE; --g2: #D7E8DF; --g3: #EEE5C8; --g4: #DEDCEB; --g5: #EEDFD0; --g6: #D3E6E8; --g7: #E6DCE2;
+  --shadow: 0 1px 0 rgba(31, 42, 54, .06), 0 12px 28px -20px rgba(31, 42, 54, .45); --grain: .35;
+  --r: 10px; --r-sm: 6px; --r-cell: 8px;
+  --font-jp: "Zen Kaku Gothic New", "Hiragino Sans", "Yu Gothic", sans-serif;
+  --font-ui: "Zen Kaku Gothic New", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-pop: "Zen Kaku Gothic New", "Hiragino Sans", sans-serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #14181E; --bg-hi: #1C222A; --panel: #1A1F26; --paper: #20262E; --ink: #E7E3DA; --ink-soft: #9AA3AE;
+    --rule: #313945; --guide: #46505E; --ghost: #2A313B; --accent: #E07A5F; --accent-ink: #1A1210;
+    --accent-soft: #3A2420; --primary: #8FB0D9; --primary-ink: #12161C; --hover: #252C35; --danger: #F08A7A;
+    --honor: #F08A8A; --honor-soft: #3C2226; --casual: #8DB8EA; --casual-soft: #1E2C40;
+    --mint: #4E8C7A; --lemon: #8F8150; --lilac: #3A4458; --pattern: #4A5462;
+    --g0: #4A2E2A; --g1: #263A54; --g2: #26443A; --g3: #4A4228; --g4: #363650; --g5: #4C3826; --g6: #234448; --g7: #44303E;
+    --shadow: 0 1px 0 rgba(0, 0, 0, .3), 0 14px 30px -18px rgba(0, 0, 0, .7); --grain: .5;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #14181E; --bg-hi: #1C222A; --panel: #1A1F26; --paper: #20262E; --ink: #E7E3DA; --ink-soft: #9AA3AE;
+  --rule: #313945; --guide: #46505E; --ghost: #2A313B; --accent: #E07A5F; --accent-ink: #1A1210;
+  --accent-soft: #3A2420; --primary: #8FB0D9; --primary-ink: #12161C; --hover: #252C35; --danger: #F08A7A;
+  --honor: #F08A8A; --honor-soft: #3C2226; --casual: #8DB8EA; --casual-soft: #1E2C40;
+  --mint: #4E8C7A; --lemon: #8F8150; --lilac: #3A4458; --pattern: #4A5462;
+  --g0: #4A2E2A; --g1: #263A54; --g2: #26443A; --g3: #4A4228; --g4: #363650; --g5: #4C3826; --g6: #234448; --g7: #44303E;
+  --shadow: 0 1px 0 rgba(0, 0, 0, .3), 0 14px 30px -18px rgba(0, 0, 0, .7); --grain: .5;
+}
+body::before {
+  -webkit-mask: radial-gradient(circle, #000 1px, transparent 1.4px) 0 0 / 24px 24px;
+  mask: radial-gradient(circle, #000 1px, transparent 1.4px) 0 0 / 24px 24px;
+}
+/* The seal becomes a square hanko stamp. */
+.seal {
+  width: 64px; height: 64px; margin-top: 0; border-radius: 8px; transform: rotate(-3deg); animation: none;
+  font: 700 18px/1.05 var(--font-jp); writing-mode: vertical-rl; letter-spacing: .1em;
+  box-shadow: inset 0 0 0 3px var(--accent), inset 0 0 0 5px color-mix(in srgb, var(--accent-ink) 70%, transparent);
+}
+.seal::before, .seal::after, .titles::after { display: none; }
+h1 { font-weight: 700; letter-spacing: .01em; text-shadow: none; }
+header.top::after { height: 2px; background: var(--rule); }
+.backup summary .label::after, .backup[open] summary .label::after { content: "▾"; color: var(--ink-soft); }
+footer p::before { content: none; }
+.btn.primary,
+.btn.primary:hover:not(:disabled) { background: var(--primary); color: var(--primary-ink); filter: none; }
+.btn.primary:hover:not(:disabled) { background: color-mix(in srgb, var(--primary) 85%, var(--ink)); }
+.fab { box-shadow: 0 2px 0 color-mix(in srgb, var(--primary) 60%, var(--ink)), 0 12px 24px -10px rgba(0, 0, 0, .35); }
+@media (max-width: 520px) { .seal { width: 52px; height: 52px; font-size: 15px; } }
