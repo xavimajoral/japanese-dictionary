@@ -1224,7 +1224,7 @@
 
   /* ---------- tabs ---------- */
   const TAB_KEY = "diccionari-japones-pestanya";
-  const TABS = { dict: $("tabDict"), notes: $("tabNotes") };
+  const TABS = { dict: $("tabDict"), notes: $("tabNotes"), kana: $("tabKana") };
   let tab = "dict";
   function showTab(name, focus) {
     tab = TABS[name] ? name : "dict";
@@ -1235,6 +1235,9 @@
       $(TABS[k].getAttribute("aria-controls")).hidden = !on;
     }
     if (focus) TABS[tab].focus();
+    // The embedded hiragana table loads the first time its tab is opened.
+    const frame = $("kanaFrame");
+    if (tab === "kana" && !frame.src) frame.src = frame.dataset.src;
     // Nothing keeps drawing or speaking in a hidden tab.
     pause();
     if (tts) tts.cancel();
@@ -1262,13 +1265,11 @@
     openForm();
   });
 
-  /* ---------- notebook: grammar, sentences, drawings and notes ---------- */
+  /* ---------- notebook: grammar and sentences ---------- */
   const NKEY = "diccionari-japones-apunts-v1";
   const NTYPES = {
     gram: { kan: "文法", name: "Grammar" },
-    frase: { kan: "例文", name: "Sentence" },
-    dibuix: { kan: "絵", name: "Drawing" },
-    nota: { kan: "メモ", name: "Note" }
+    frase: { kan: "例文", name: "Sentence" }
   };
   // Sentence groups, offered in the composer and as a sub-filter under the "Sentences" chip (see groupKit()).
   const SGROUPS = {
@@ -1291,23 +1292,16 @@
   // The fields each type shows in the composer and keeps when saved. For "gram", jp is the structure.
   const NFIELDS = {
     gram: ["title", "jp", "reg", "body", "examples"],
-    frase: ["jp", "kana", "romaji", "group", "ca", "reg", "body"],
-    dibuix: ["title", "strokes", "grid", "body"],
-    nota: ["title", "body"]
+    frase: ["jp", "kana", "romaji", "group", "ca", "reg", "body"]
   };
   const NHINTS = {
     gram: "Add a title or a pattern. Examples go one per line: Japanese = English.",
-    frase: "Type the romaji and press “Generate” to fill in the Japanese and the furigana. If there is furigana, that is what gets read aloud.",
-    dibuix: "Draw with the mouse, a finger or a stylus. The grid helps you practise kanji.",
-    nota: "Anything you want to remember from the course."
+    frase: "Type the romaji and press “Generate” to fill in the Japanese and the furigana. If there is furigana, that is what gets read aloud."
   };
   const NERRORS = {
     gram: "Enter a title or a pattern.",
-    frase: "Enter the sentence in Japanese.",
-    dibuix: "Draw something on the canvas.",
-    nota: "Enter a title or some text."
+    frase: "Enter the sentence in Japanese."
   };
-  const PENS = [2.5, 5, 9];
   const NSEED = [
     {
       type: "gram", title: "Particle は (topic)", jp: "A は B です",
@@ -1328,13 +1322,9 @@
       examples: [{ jp: "せんせいのほん", ca: "the teacher's book" }, { jp: "にほんのやま", ca: "the mountains of Japan" }]
     }
   ];
-  const r1 = (x) => Math.round(x * 10) / 10;
-
   function noteOk(n) {
     if (n.type === "frase") return !!n.jp;
-    if (n.type === "dibuix") return n.strokes.length > 0;
-    if (n.type === "gram") return !!(n.title || n.jp);
-    return !!(n.title || n.body);
+    return !!(n.title || n.jp);
   }
   function cleanNotes(a) {
     if (!Array.isArray(a)) return null;
@@ -1344,13 +1334,10 @@
       const x = {
         id: uid(), type: n.type, at: Number(n.at) || Date.now(),
         title: str(n.title), jp: str(n.jp).normalize("NFC"), kana: str(n.kana).normalize("NFC"),
-        romaji: str(n.romaji), group: n.type === "frase" ? sg.of(n.group) : "", ca: str(n.ca), reg: regOf(n.reg), body: str(n.body), grid: !!n.grid,
+        romaji: str(n.romaji), group: n.type === "frase" ? sg.of(n.group) : "", ca: str(n.ca), reg: regOf(n.reg), body: str(n.body),
         examples: (Array.isArray(n.examples) ? n.examples : [])
           .filter((e) => e && str(e.jp))
-          .map((e) => ({ jp: str(e.jp).normalize("NFC"), ca: str(e.ca) })),
-        strokes: (Array.isArray(n.strokes) ? n.strokes : [])
-          .filter((s) => s && Array.isArray(s.p) && s.p.length >= 2 && s.p.every(Number.isFinite))
-          .map((s) => ({ c: s.c === "a" ? "a" : "i", w: PENS.includes(s.w) ? s.w : 5, p: s.p.slice(0, s.p.length - (s.p.length % 2)) }))
+          .map((e) => ({ jp: str(e.jp).normalize("NFC"), ca: str(e.ca) }))
       };
       if (noteOk(x)) out.push(x);
     }
@@ -1385,72 +1372,6 @@
   }
   let notes = loadNotes();
 
-  /* drawings: strokes are flat [x0, y0, x1, y1, …] arrays in a 400×300 box, drawn with theme colours */
-  function strokeD(p) {
-    if (p.length < 4) return "M" + p[0] + " " + p[1] + "l0 .01";
-    let d = "M" + p[0] + " " + p[1];
-    for (let i = 2; i < p.length - 2; i += 2) {
-      d += "Q" + p[i] + " " + p[i + 1] + " " + r1((p[i] + p[i + 2]) / 2) + " " + r1((p[i + 1] + p[i + 3]) / 2);
-    }
-    return d + "L" + p[p.length - 2] + " " + p[p.length - 1];
-  }
-  const strokeEl = (s) => svgEl("path", { class: s.c === "a" ? "inkp a" : "inkp", d: strokeD(s.p), "stroke-width": s.w });
-  function gridEl() {
-    const g = svgEl("g", { class: "padgrid" });
-    for (let x = 50; x < 400; x += 50) g.append(svgEl("line", { class: x % 100 ? "mid" : "", x1: x, y1: 0, x2: x, y2: 300 }));
-    for (let y = 50; y < 300; y += 50) g.append(svgEl("line", { class: y % 100 ? "mid" : "", x1: 0, y1: y, x2: 400, y2: y }));
-    return g;
-  }
-
-  const pad = $("pad");
-  let padStrokes = [], penColor = "i", penWidth = 5, drawing = null;
-  pad.prepend(gridEl());
-  function redrawPad() {
-    $("padInk").textContent = "";
-    padStrokes.forEach((s) => $("padInk").append(strokeEl(s)));
-    $("pUndo").disabled = $("pClear").disabled = !padStrokes.length;
-  }
-  function syncPen() {
-    const c = document.querySelector("input[name=pcolor]:checked");
-    penColor = c ? c.value : "i";
-    penWidth = Number($("pWidth").value) || 5;
-    pad.classList.toggle("nogrid", !$("nGrid").checked);
-  }
-  function padPoint(e) {
-    const r = pad.getBoundingClientRect();
-    const x = Math.max(0, Math.min(400, ((e.clientX - r.left) / r.width) * 400));
-    const y = Math.max(0, Math.min(300, ((e.clientY - r.top) / r.height) * 300));
-    return [r1(x), r1(y)];
-  }
-  pad.addEventListener("pointerdown", (e) => {
-    if (e.button > 0) return;
-    e.preventDefault();
-    pad.setPointerCapture(e.pointerId);
-    const s = { c: penColor, w: penWidth, p: padPoint(e) };
-    padStrokes.push(s);
-    drawing = { s, el: strokeEl(s) };
-    $("padInk").append(drawing.el);
-    $("pUndo").disabled = $("pClear").disabled = false;
-  });
-  pad.addEventListener("pointermove", (e) => {
-    if (!drawing) return;
-    const p = drawing.s.p;
-    const evs = e.getCoalescedEvents ? e.getCoalescedEvents() : [];
-    for (const ev of evs.length ? evs : [e]) {
-      const [x, y] = padPoint(ev);
-      if (Math.hypot(x - p[p.length - 2], y - p[p.length - 1]) >= 1.5) p.push(x, y);
-    }
-    drawing.el.setAttribute("d", strokeD(p));
-  });
-  const endStroke = () => { drawing = null; };
-  pad.addEventListener("pointerup", endStroke);
-  pad.addEventListener("pointercancel", endStroke);
-  $("pUndo").addEventListener("click", () => { padStrokes.pop(); redrawPad(); });
-  $("pClear").addEventListener("click", () => { padStrokes = []; redrawPad(); });
-  document.querySelectorAll("input[name=pcolor]").forEach((r) => r.addEventListener("change", syncPen));
-  $("pWidth").addEventListener("change", syncPen);
-  $("nGrid").addEventListener("change", syncPen);
-
   /* composer */
   let ntype = "gram", editId = null;
   function noteHint(err) {
@@ -1464,8 +1385,7 @@
     document.querySelectorAll("#nForm [data-for]").forEach((el) => { el.hidden = !el.dataset.for.split(" ").includes(ntype); });
     $("nJpLabel").textContent = ntype === "gram" ? "Pattern" : "Japanese sentence";
     $("nJp").placeholder = ntype === "gram" ? "A は B です" : "日本語を勉強しています。";
-    $("nTitle").placeholder = ntype === "gram" ? "Particle は (topic)" : ntype === "dibuix" ? "Optional" : "";
-    $("nBodyLabel").textContent = ntype === "gram" ? "Explanation" : ntype === "nota" ? "Text" : "Notes (optional)";
+    $("nBodyLabel").textContent = ntype === "gram" ? "Explanation" : "Notes (optional)";
     noteHint();
   }
   function markEditing() {
@@ -1474,9 +1394,6 @@
   function resetComposer() {
     editId = null;
     $("nForm").reset();
-    padStrokes = [];
-    redrawPad();
-    syncPen();
     setType(ntype);
     sg.close();
     $("cTitleText").textContent = "New note";
@@ -1506,10 +1423,6 @@
     document.querySelectorAll("input[name=nreg]").forEach((r) => { r.checked = r.value === n.reg; });
     $("nBody").value = n.body;
     $("nEx").value = n.examples.map((e) => (e.ca ? e.jp + " = " + e.ca : e.jp)).join("\n");
-    if (n.type === "dibuix") $("nGrid").checked = n.grid;
-    padStrokes = n.strokes.map((s) => ({ c: s.c, w: s.w, p: [...s.p] }));
-    redrawPad();
-    syncPen();
     $("cTitleText").textContent = "Edit note";
     $("nSave").textContent = "Save changes";
     markEditing();
@@ -1589,9 +1502,7 @@
       type: ntype, title: v("nTitle", "title"), jp: v("nJp", "jp"), kana: v("nKa", "kana"), romaji: v("nRo", "romaji"),
       group: v("nGroup", "group"), ca: v("nCa", "ca"), body: v("nBody", "body"),
       reg: keep.includes("reg") ? document.querySelector("input[name=nreg]:checked").value : "",
-      examples: keep.includes("examples") ? parseExamples($("nEx").value) : [],
-      strokes: keep.includes("strokes") ? padStrokes : [],
-      grid: keep.includes("grid") && $("nGrid").checked
+      examples: keep.includes("examples") ? parseExamples($("nEx").value) : []
     }])[0];
     if (!draft) { noteHint(NERRORS[ntype]); return; }
     const old = editId && notes.find((x) => x.id === editId);
@@ -1661,14 +1572,6 @@
       const meta = node("div", "meta");
       meta.append(node("span", "kana", n.kana, true), node("span", "romaji", n.romaji), node("span", "ca", n.ca));
       card.append(node("p", "sent", n.jp, true), meta);
-    }
-    if (n.type === "dibuix") {
-      const box = node("div", "drawing");
-      const svg = svgEl("svg", { viewBox: "0 0 400 300", role: "img", "aria-label": n.title ? "Drawing: " + n.title : "Drawing" });
-      if (n.grid) svg.append(gridEl());
-      n.strokes.forEach((s) => svg.append(strokeEl(s)));
-      box.append(svg);
-      card.append(box);
     }
     if (n.body) card.append(node("p", "body", n.body));
     if (n.examples.length) {
@@ -1761,7 +1664,7 @@
   $("nLoad").addEventListener("click", () => {
     let c = null;
     try { const a = JSON.parse($("nBackup").value); c = cleanNotes(a); if (c && !c.length && a.length) c = null; } catch (e) { c = null; }
-    if (!c) { noteBackupMsg("Invalid JSON. Each note needs a “type”: gram, frase, dibuix or nota."); return; }
+    if (!c) { noteBackupMsg("Invalid JSON. Each note needs a “type”: gram or frase."); return; }
     notes = c;
     lastNote = null;
     saveNotes();

@@ -1,0 +1,318 @@
+<title>Hiragana Stroke Table</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Klee+One:wght@400;600&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  /* Layout: a practice sheet. The chart is a grid of ruled writing boxes (cross guides, like the paper in the videos);
+     a click opens a modal with that character's handwriting clip. Red is the teacher's marker. */
+  :root {
+    --paper: #eef1f5;      /* bluish practice paper */
+    --box: #fbfcfd;        /* writing box */
+    --ink: #1a1e26;
+    --ink-soft: #5b6574;
+    --line: #b7c0cc;
+    --guide: #d3d9e1;
+    --red: #cf2f27;        /* marker red */
+    --red-ink: #ffffff;
+    --scrim: rgba(18, 22, 30, .55);
+    --font-kana: "Klee One", "Hiragino Maru Gothic ProN", "Yu Gothic", "Noto Sans JP", sans-serif;
+    --font-body: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+    --font-mono: "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --paper: #14181e; --box: #1b2028; --ink: #e9edf3; --ink-soft: #97a2b2;
+      --line: #3a4350; --guide: #2b323d; --red: #ff6a5c; --red-ink: #1b0b09;
+      --scrim: rgba(0, 0, 0, .65); color-scheme: dark;
+    }
+  }
+  :root[data-theme="dark"] {
+    --paper: #14181e; --box: #1b2028; --ink: #e9edf3; --ink-soft: #97a2b2;
+    --line: #3a4350; --guide: #2b323d; --red: #ff6a5c; --red-ink: #1b0b09;
+    --scrim: rgba(0, 0, 0, .65); color-scheme: dark;
+  }
+
+  * { box-sizing: border-box; }
+  html, body { min-height: 100%; }
+  body {
+    background: var(--paper); color: var(--ink);
+    font: 400 15px/1.5 var(--font-body);
+    padding-block: 32px 56px;
+    padding-left: max(16px, env(safe-area-inset-left, 0px));
+    padding-right: max(16px, env(safe-area-inset-right, 0px));
+  }
+  .wrap { max-width: 640px; margin: 0 auto; }
+
+  header { display: grid; gap: 6px; margin-bottom: 28px; }
+  h1 { margin: 0; font: 600 clamp(26px, 6vw, 34px)/1.1 var(--font-body); letter-spacing: -.01em; text-wrap: balance; }
+  header p { margin: 0; color: var(--ink-soft); max-width: 46ch; text-wrap: pretty; }
+  header .mark { color: var(--red); font-weight: 500; }
+
+  /* chart */
+  .chart {
+    display: grid;
+    grid-template-columns: minmax(18px, 28px) repeat(5, minmax(0, 1fr));
+    gap: 6px;
+    align-items: center;
+  }
+  .col-h, .row-h {
+    font: 500 11px/1 var(--font-mono); color: var(--ink-soft);
+    text-transform: lowercase; letter-spacing: .06em; text-align: center;
+  }
+  .col-h { padding-bottom: 2px; }
+  .row-h { text-align: left; }
+
+  .cell, .gap {
+    aspect-ratio: 1; width: 100%;
+    border-radius: 3px;
+  }
+  .cell {
+    position: relative; display: grid; place-items: center;
+    border: 1px solid var(--line);
+    background-color: var(--box);
+    background-image:
+      repeating-linear-gradient(to bottom, var(--guide) 0 3px, transparent 3px 7px),
+      repeating-linear-gradient(to right, var(--guide) 0 3px, transparent 3px 7px);
+    background-size: 1px 100%, 100% 1px;
+    background-position: 50% 0, 0 50%;
+    background-repeat: no-repeat;
+    color: var(--ink); cursor: pointer; padding: 0;
+    font: 400 clamp(28px, 8.5vw, 50px)/1 var(--font-kana);
+    transition: border-color .12s, box-shadow .12s, transform .12s;
+  }
+  .cell .kana { position: relative; }
+  .cell .ro {
+    position: absolute; right: 6px; bottom: 4px;
+    font: 400 10px/1 var(--font-mono); color: var(--ink-soft); letter-spacing: .02em;
+  }
+  .cell:hover { border-color: var(--red); box-shadow: 0 0 0 1px var(--red); transform: translateY(-1px); }
+  .cell:focus-visible { outline: 2px solid var(--red); outline-offset: 2px; }
+  .cell:active { transform: translateY(0); }
+  .gap { border: 1px dashed var(--guide); opacity: .7; }
+
+  .foot { margin-top: 22px; color: var(--ink-soft); font-size: 13px; display: flex; gap: 8px 18px; flex-wrap: wrap; }
+  .foot kbd {
+    font: 500 11px/1 var(--font-mono); padding: 2px 5px; border: 1px solid var(--line);
+    border-radius: 3px; background: var(--box); color: var(--ink);
+  }
+
+  /* popup */
+  dialog {
+    padding: 0; border: 1px solid var(--line); border-radius: 6px;
+    background: var(--paper); color: var(--ink);
+    width: min(720px, calc(100vw - 24px)); max-height: calc(100dvh - 24px);
+    overflow: auto; overscroll-behavior: contain;
+    box-shadow: 0 24px 60px rgba(0, 0, 0, .35);
+  }
+  dialog::backdrop { background: var(--scrim); backdrop-filter: blur(3px); }
+  .sheet { display: grid; gap: 14px; padding: 16px; }
+  .top { display: flex; align-items: flex-end; gap: 14px; }
+  .big { font: 400 64px/1 var(--font-kana); }
+  .meta { display: grid; gap: 2px; padding-bottom: 6px; min-width: 0; }
+  .romaji { font: 500 20px/1.1 var(--font-mono); }
+  .pos { font: 400 12px/1 var(--font-mono); color: var(--ink-soft); }
+  .close {
+    margin-left: auto; align-self: flex-start;
+    width: 36px; height: 36px; border-radius: 3px; border: 1px solid var(--line);
+    background: var(--box); color: var(--ink); cursor: pointer; font: 400 20px/1 var(--font-body);
+  }
+  .stage {
+    background: var(--box); border: 1px solid var(--line); border-radius: 3px;
+    aspect-ratio: 16 / 9; max-width: 100%; overflow: hidden;
+  }
+  video { display: block; width: 100%; height: 100%; background: var(--box); object-fit: contain; }
+
+  .controls { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+  .seg { display: inline-flex; border: 1px solid var(--line); border-radius: 3px; overflow: hidden; background: var(--box); }
+  .seg button { border: 0; border-right: 1px solid var(--line); border-radius: 0; }
+  .seg button:last-child { border-right: 0; }
+  .controls button {
+    font: 500 13px/1 var(--font-body); color: var(--ink); background: var(--box);
+    border: 1px solid var(--line); border-radius: 3px; padding: 9px 12px; min-height: 36px; cursor: pointer;
+  }
+  .controls button:hover { border-color: var(--red); }
+  .controls button[aria-pressed="true"], .seg button[aria-pressed="true"] {
+    background: var(--red); color: var(--red-ink); border-color: var(--red);
+  }
+  .controls .nav { margin-left: auto; display: flex; gap: 8px; }
+  .controls .nav .k { font-family: var(--font-kana); font-size: 16px; margin: 0 4px; }
+  .close:hover { border-color: var(--red); }
+  .close:focus-visible, .controls button:focus-visible, video:focus-visible { outline: 2px solid var(--red); outline-offset: 2px; }
+
+  @media (max-width: 480px) {
+    .big { font-size: 52px; }
+    .controls .nav { margin-left: 0; width: 100%; }
+    .controls .nav button { flex: 1; }
+    .cell .ro { right: 4px; bottom: 3px; font-size: 9px; }
+    .chart { gap: 5px; }
+  }
+  @media (prefers-reduced-motion: reduce) { .cell { transition: none; } }
+</style>
+
+<div class="wrap">
+  <header>
+    <h1>Hiragana Stroke Table</h1>
+    <p>Pick a character to watch it written by hand. <span class="mark">Red marks</span> show where each stroke starts and which way it goes.</p>
+  </header>
+
+  <div class="chart" id="chart" role="group" aria-label="Hiragana chart"></div>
+
+  <div class="foot">
+    <span>46 basic characters</span>
+    <span><kbd>←</kbd> <kbd>→</kbd> next and previous in the popup</span>
+    <span><kbd>Esc</kbd> closes it</span>
+  </div>
+</div>
+
+<dialog id="dlg" aria-labelledby="dlg-title">
+  <div class="sheet">
+    <div class="top">
+      <div class="big" id="dlg-kana" lang="ja">あ</div>
+      <div class="meta">
+        <div class="romaji" id="dlg-title">a</div>
+        <div class="pos" id="dlg-pos">1 / 46</div>
+      </div>
+      <button class="close" id="close" type="button" aria-label="Close">×</button>
+    </div>
+
+    <div class="stage">
+      <video id="vid" muted playsinline autoplay loop controls preload="auto"></video>
+    </div>
+
+    <div class="controls">
+      <button id="replay" type="button">Replay</button>
+      <div class="seg" role="group" aria-label="Playback speed">
+        <button type="button" data-speed="0.5" aria-pressed="false">0.5×</button>
+        <button type="button" data-speed="1" aria-pressed="true">1×</button>
+        <button type="button" data-speed="1.5" aria-pressed="false">1.5×</button>
+      </div>
+      <button id="loop" type="button" aria-pressed="true">Loop</button>
+      <div class="nav">
+        <button id="prev" type="button" aria-label="Previous character"><span aria-hidden="true">←</span><span class="k" id="prev-k" lang="ja"></span></button>
+        <button id="next" type="button" aria-label="Next character"><span class="k" id="next-k" lang="ja"></span><span aria-hidden="true">→</span></button>
+      </div>
+    </div>
+  </div>
+</dialog>
+
+<script>
+  // Chart order: rows are consonants, columns are vowels. null = no such sound.
+  var ROWS = [
+    ["",  [["あ","a"],["い","i"],["う","u"],["え","e"],["お","o"]]],
+    ["k", [["か","ka"],["き","ki"],["く","ku"],["け","ke"],["こ","ko"]]],
+    ["s", [["さ","sa"],["し","shi"],["す","su"],["せ","se"],["そ","so"]]],
+    ["t", [["た","ta"],["ち","chi"],["つ","tsu"],["て","te"],["と","to"]]],
+    ["n", [["な","na"],["に","ni"],["ぬ","nu"],["ね","ne"],["の","no"]]],
+    ["h", [["は","ha"],["ひ","hi"],["ふ","fu"],["へ","he"],["ほ","ho"]]],
+    ["m", [["ま","ma"],["み","mi"],["む","mu"],["め","me"],["も","mo"]]],
+    ["y", [["や","ya"],null,["ゆ","yu"],null,["よ","yo"]]],
+    ["r", [["ら","ra"],["り","ri"],["る","ru"],["れ","re"],["ろ","ro"]]],
+    ["w", [["わ","wa"],null,null,null,["を","wo"]]],
+    ["–", [["ん","n"],null,null,null,null]]
+  ];
+  var VOWELS = ["a","i","u","e","o"];
+
+  var chart = document.getElementById("chart");
+  var flat = [];
+
+  function el(tag, cls, text) {
+    var n = document.createElement(tag);
+    if (cls) n.className = cls;
+    if (text != null) n.textContent = text;
+    return n;
+  }
+
+  chart.appendChild(el("span"));
+  VOWELS.forEach(function (v) { chart.appendChild(el("span", "col-h", v)); });
+
+  ROWS.forEach(function (row) {
+    chart.appendChild(el("span", "row-h", row[0]));
+    row[1].forEach(function (c) {
+      if (!c) { chart.appendChild(el("span", "gap")); return; }
+      var idx = flat.length;
+      flat.push({ kana: c[0], ro: c[1] });
+      var b = el("button", "cell");
+      b.type = "button";
+      b.setAttribute("aria-label", c[0] + ", " + c[1] + ". Watch how it is written");
+      b.setAttribute("lang", "ja");
+      b.appendChild(el("span", "kana", c[0]));
+      b.appendChild(el("span", "ro", c[1]));
+      b.addEventListener("click", function () { openAt(idx); });
+      chart.appendChild(b);
+    });
+  });
+
+  var dlg = document.getElementById("dlg");
+  var vid = document.getElementById("vid");
+  var cur = -1, speed = 1, loop = true;
+
+  function hashSet(v) {
+    try { history.replaceState(null, "", v ? "#" + v : location.pathname + location.search); } catch (e) {}
+  }
+
+  function openAt(i) {
+    var n = flat.length;
+    i = (i + n) % n;
+    cur = i;
+    var c = flat[i];
+    document.getElementById("dlg-kana").textContent = c.kana;
+    document.getElementById("dlg-title").textContent = c.ro;
+    document.getElementById("dlg-pos").textContent = (i + 1) + " / " + n;
+    document.getElementById("prev-k").textContent = flat[(i + n - 1) % n].kana;
+    document.getElementById("next-k").textContent = flat[(i + 1) % n].kana;
+    vid.defaultPlaybackRate = speed;
+    vid.loop = loop;
+    vid.src = "videos/" + c.ro + ".mp4";
+    vid.playbackRate = speed;
+    if (!dlg.open) dlg.showModal();
+    var p = vid.play();
+    if (p && p.catch) p.catch(function () {});
+    hashSet(c.ro);
+  }
+
+  function closeDlg() { if (dlg.open) dlg.close(); }
+
+  dlg.addEventListener("close", function () {
+    vid.pause();
+    cur = -1;
+    hashSet("");
+  });
+  dlg.addEventListener("click", function (e) { if (e.target === dlg) closeDlg(); });
+  dlg.addEventListener("keydown", function (e) {
+    if (e.target === vid) return;           // arrows seek inside the player
+    if (e.key === "ArrowRight") { e.preventDefault(); openAt(cur + 1); }
+    if (e.key === "ArrowLeft")  { e.preventDefault(); openAt(cur - 1); }
+  });
+
+  document.getElementById("close").addEventListener("click", closeDlg);
+  document.getElementById("prev").addEventListener("click", function () { openAt(cur - 1); });
+  document.getElementById("next").addEventListener("click", function () { openAt(cur + 1); });
+  document.getElementById("replay").addEventListener("click", function () {
+    vid.currentTime = 0; var p = vid.play(); if (p && p.catch) p.catch(function () {});
+  });
+
+  var loopBtn = document.getElementById("loop");
+  loopBtn.addEventListener("click", function () {
+    loop = !loop; vid.loop = loop; loopBtn.setAttribute("aria-pressed", String(loop));
+  });
+
+  var speedBtns = Array.prototype.slice.call(document.querySelectorAll("[data-speed]"));
+  speedBtns.forEach(function (b) {
+    b.addEventListener("click", function () {
+      speed = parseFloat(b.dataset.speed);
+      vid.defaultPlaybackRate = speed; vid.playbackRate = speed;
+      speedBtns.forEach(function (x) { x.setAttribute("aria-pressed", String(x === b)); });
+    });
+  });
+
+  // Deep link: #ka opens か.
+  function fromHash() {
+    var h = location.hash.slice(1);
+    var i = flat.findIndex(function (c) { return c.ro === h; });
+    if (i >= 0 && i !== cur) openAt(i);
+    else if (!h && dlg.open) closeDlg();
+  }
+  window.addEventListener("hashchange", fromHash);
+  fromHash();
+</script>

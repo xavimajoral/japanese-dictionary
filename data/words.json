@@ -442,6 +442,12 @@
     "ca": "Conversation"
   },
   {
+    "jp": "かっこいい",
+    "kana": "",
+    "romaji": "kakkoii",
+    "ca": "Cool"
+  },
+  {
     "jp": "かんこく",
     "kana": "",
     "romaji": "kankoku",
@@ -542,6 +548,12 @@
     "kana": "みず",
     "romaji": "mizu",
     "ca": "water"
+  },
+  {
+    "jp": "ミュージシャン",
+    "kana": "",
+    "romaji": "myuujishan",
+    "ca": "Musician"
   },
   {
     "jp": "なに",
@@ -738,6 +750,12 @@
     "ca": "Major subject; special study"
   },
   {
+    "jp": "せんぱい",
+    "kana": "",
+    "romaji": "senpai",
+    "ca": "Senior member"
+  },
+  {
     "jp": "せんぷうき",
     "kana": "",
     "romaji": "senpuuki",
@@ -905,6 +923,12 @@
     "kana": "",
     "romaji": "uta",
     "ca": "Song"
+  },
+  {
+    "jp": "わたし",
+    "kana": "",
+    "romaji": "watashi",
+    "ca": "I"
   },
   {
     "jp": "やま",

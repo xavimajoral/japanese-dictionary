@@ -389,6 +389,14 @@ html:has(.addpop[open], .notepop[open]) { overflow: hidden; }
 .tab[aria-selected="true"] { color: var(--accent-ink); background: var(--accent); }
 .tab[aria-selected="true"] .kan { opacity: 1; color: var(--accent); background: var(--accent-ink); border-color: transparent; }
 
+/* Embedded app (the hiragana stroke table from its own repo): a framed sheet filling the viewport. */
+.embed { display: grid; gap: 10px; justify-items: end; }
+.embed iframe {
+  width: 100%; height: max(560px, calc(100vh - 220px)); height: max(560px, calc(100dvh - 220px)); display: block;
+  background: var(--paper); border: 2px solid var(--rule); border-radius: var(--r); box-shadow: var(--shadow);
+}
+.embed a { color: var(--ink-soft); }
+
 /* Notebook: the notes take the full width; the composer is a modal popup like the word form. */
 .layout.notes { grid-template-columns: minmax(0, 1fr); }
 .notes .shelf { min-width: 0; display: flex; flex-direction: column; gap: 16px; }
@@ -412,6 +420,7 @@ html:has(.addpop[open], .notepop[open]) { overflow: hidden; }
 .seg input:hover + span { background: var(--hover); color: var(--ink); }
 .seg input:checked + span { background: var(--accent); color: var(--accent-ink); }
 .seg input:focus-visible + span { outline: 2px solid var(--accent); outline-offset: -2px; }
+.seg.two { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 .seg.three { grid-template-columns: repeat(3, minmax(0, 1fr)); }
 .regfield { max-width: 420px; }
 /* Register: honorific (敬語) in red, casual (タメ口) in blue. A badge with an icon in the player and on note
@@ -448,29 +457,7 @@ button.reg.none { border-style: dashed; }
 .field textarea.line { min-height: 0; field-sizing: content; resize: none; line-height: 1.45; }
 .field textarea.line.jpin { font-size: 18px; padding-block: 6px; }
 
-/* Drawing pad: 400×300 user units, with an optional practice grid of 100-unit cells. */
-.padfield { display: flex; flex-direction: column; gap: 8px; }
-.padfield .flabel, .field .flabel { font-size: 12px; letter-spacing: .08em; color: var(--ink-soft); }
-#pad { display: block; width: 100%; height: auto; aspect-ratio: 4 / 3; background: var(--paper); border: 2px solid var(--rule); border-radius: var(--r-sm); touch-action: none; cursor: crosshair; }
-#pad.nogrid .padgrid { display: none; }
-.padgrid line { stroke: var(--guide); stroke-width: .8; }
-.padgrid line.mid { stroke-width: .6; stroke-dasharray: 3 4; }
-.inkp { fill: none; stroke: var(--ink); stroke-linecap: round; stroke-linejoin: round; }
-.inkp.a { stroke: var(--accent); }
-.padtools { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 14px; font-size: 14px; color: var(--ink-soft); }
-.padtools label { display: inline-flex; align-items: center; gap: 6px; }
-.padtools select { background: var(--paper); border: 2px solid var(--rule); border-radius: var(--pill); padding: 4px 10px; }
-.padtools input[type=checkbox] { accent-color: var(--accent); width: 16px; height: 16px; }
-.padtools .btn { height: 34px; font-size: 14px; }
-.padbtns { display: inline-flex; gap: 6px; margin-left: auto; }
-.pens { display: inline-flex; gap: 4px; }
-.pen { position: relative; cursor: pointer; }
-.pen input { position: absolute; inset: 0; margin: 0; opacity: 0; cursor: pointer; }
-.pen .dot { display: block; width: 28px; height: 28px; border-radius: 50%; border: 2px solid var(--panel); box-shadow: 0 0 0 1px var(--rule); }
-.pen .dot.ink { background: var(--ink); }
-.pen .dot.shu { background: var(--accent); }
-.pen input:checked + .dot { box-shadow: 0 0 0 2px var(--accent); }
-.pen input:focus-visible + .dot { outline: 2px solid var(--accent); outline-offset: 3px; }
+.field .flabel { font-size: 12px; letter-spacing: .08em; color: var(--ink-soft); }
 
 /* Filter chips and note cards */
 .chips { display: flex; flex-wrap: wrap; gap: 6px; }
@@ -505,8 +492,6 @@ button.reg.none { border-style: dashed; }
 .card.fresh { animation: fresh 1.6s ease-out; }
 .card.gram { --card-band: var(--primary); }
 .card.frase { --card-band: var(--accent); }
-.card.dibuix { --card-band: var(--mint); }
-.card.nota { --card-band: var(--lemon); }
 .card:hover { transform: translateY(-2px); }
 @media (prefers-reduced-motion: reduce) { .card, .card:hover { transition: none; transform: none; } }
 .card.editing { border-color: var(--accent); box-shadow: 0 0 0 4px var(--accent-soft), var(--shadow); }
@@ -525,7 +510,6 @@ button.reg.none { border-style: dashed; }
 .card .meta .romaji { color: var(--accent); font-weight: 500; letter-spacing: .06em; }
 .card .meta .ca { flex-basis: 100%; font: 500 17px/1.45 var(--font-jp); }
 .card .body { margin: 0; white-space: pre-line; text-wrap: pretty; overflow-wrap: anywhere; }
-.card .drawing svg { display: block; width: 100%; max-width: 520px; height: auto; aspect-ratio: 4 / 3; background: var(--bg); border-radius: var(--r-sm); }
 .ex { list-style: none; margin: 4px 0 0; padding: 10px 0 0; border-top: 2px dotted var(--rule); display: flex; flex-direction: column; gap: 4px; }
 .ex li { display: flex; flex-wrap: wrap; align-items: center; gap: 0 12px; }
 .ex .jp { font: 500 18px/1.45 var(--font-jp); overflow-wrap: anywhere; }

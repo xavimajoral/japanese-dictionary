@@ -40,6 +40,7 @@
   <nav class="tabs" id="tabs" role="tablist" aria-label="Sections">
     <button type="button" class="tab" role="tab" id="tabDict" data-tab="dict" aria-controls="pDict" aria-selected="true"><span class="kan" lang="ja" aria-hidden="true">辞書</span>Dictionary</button>
     <button type="button" class="tab" role="tab" id="tabNotes" data-tab="notes" aria-controls="pNotes" aria-selected="false" tabindex="-1"><span class="kan" lang="ja" aria-hidden="true">文法</span>Grammar and notes</button>
+    <button type="button" class="tab" role="tab" id="tabKana" data-tab="kana" aria-controls="pKana" aria-selected="false" tabindex="-1"><span class="kan" lang="ja" aria-hidden="true">仮名</span>Hiragana table</button>
   </nav>
 
   <div class="layout" id="pDict" role="tabpanel" aria-labelledby="tabDict">
@@ -189,8 +190,6 @@
         <button type="button" class="chip" data-f="all" aria-pressed="true">All <span class="n"></span></button>
         <button type="button" class="chip" data-f="gram" aria-pressed="false">Grammar <span class="n"></span></button>
         <button type="button" class="chip" data-f="frase" aria-pressed="false">Sentences <span class="n"></span></button>
-        <button type="button" class="chip" data-f="dibuix" aria-pressed="false">Drawings <span class="n"></span></button>
-        <button type="button" class="chip" data-f="nota" aria-pressed="false">Notes <span class="n"></span></button>
       </div>
       <div class="chips sub" id="sgroups" role="group" aria-label="Filter sentences by group" hidden></div>
       <div class="notelist" id="notes"></div>
@@ -222,13 +221,11 @@
       </button>
       <h2 class="label" id="cTitle"><span class="kan" lang="ja" aria-hidden="true">記入</span><span id="cTitleText">New note</span></h2>
       <form id="nForm" autocomplete="off" novalidate>
-        <div class="seg" role="radiogroup" aria-label="Note type">
+        <div class="seg two" role="radiogroup" aria-label="Note type">
           <label><input type="radio" name="ntype" value="gram" checked><span>Grammar</span></label>
           <label><input type="radio" name="ntype" value="frase"><span>Sentence</span></label>
-          <label><input type="radio" name="ntype" value="dibuix"><span>Drawing</span></label>
-          <label><input type="radio" name="ntype" value="nota"><span>Note</span></label>
         </div>
-        <div class="field" data-for="gram dibuix nota"><label for="nTitle">Title</label><input type="text" id="nTitle"></div>
+        <div class="field" data-for="gram"><label for="nTitle">Title</label><input type="text" id="nTitle"></div>
         <div class="field" data-for="gram frase"><label for="nJp" id="nJpLabel">Pattern</label><textarea id="nJp" class="jpin line" lang="ja" rows="1"></textarea></div>
         <div class="field" data-for="frase"><label for="nKa">Furigana</label>
           <div class="inrow"><textarea id="nKa" class="jpin line" lang="ja" rows="1" placeholder="にほんごをべんきょうしています。"></textarea><button type="button" class="btn kanji" id="nKan" lang="ja" title="Fill in the Japanese sentence with kanji from the furigana" aria-label="Convert the furigana to kanji">漢字</button></div>
@@ -247,28 +244,6 @@
             <label title="Casual speech with friends and family (タメ口)"><input type="radio" name="nreg" value="cas"><span>Casual</span></label>
           </div>
         </div>
-        <div class="padfield" data-for="dibuix">
-          <span class="flabel" id="padLabel">Drawing</span>
-          <svg id="pad" viewBox="0 0 400 300" role="img" aria-labelledby="padLabel"><g id="padInk"></g></svg>
-          <div class="padtools">
-            <span class="pens" role="radiogroup" aria-label="Color">
-              <label class="pen" title="Ink"><input type="radio" name="pcolor" value="i" checked><span class="dot ink"></span><span class="sr">Ink</span></label>
-              <label class="pen" title="Red"><input type="radio" name="pcolor" value="a"><span class="dot shu"></span><span class="sr">Red</span></label>
-            </span>
-            <label for="pWidth">Width
-              <select id="pWidth">
-                <option value="2.5">Thin</option>
-                <option value="5" selected>Medium</option>
-                <option value="9">Thick</option>
-              </select>
-            </label>
-            <label for="nGrid"><input type="checkbox" id="nGrid" checked> Grid</label>
-            <span class="padbtns">
-              <button type="button" class="btn" id="pUndo">Undo</button>
-              <button type="button" class="btn" id="pClear">Clear</button>
-            </span>
-          </div>
-        </div>
         <div class="field"><label for="nBody" id="nBodyLabel">Explanation</label><textarea id="nBody"></textarea></div>
         <div class="field" data-for="gram"><label for="nEx">Examples</label><textarea id="nEx" class="jpin" lang="ja" placeholder="わたしはがくせいです。 = I am a student."></textarea></div>
         <div class="row">
@@ -279,6 +254,11 @@
       </form>
     </section>
     </dialog>
+  </div>
+
+  <div class="embed" id="pKana" role="tabpanel" aria-labelledby="tabKana" hidden>
+    <iframe id="kanaFrame" title="Hiragana stroke table" data-src="hiragana_table_site/index.html"></iframe>
+    <a class="hint" href="hiragana_table_site/index.html" target="_blank" rel="noopener">Open the hiragana table in a new tab</a>
   </div>
 
   <footer>
