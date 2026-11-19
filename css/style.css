@@ -319,6 +319,7 @@ tr.editing .edit { color: var(--accent); }
 .vtable tbody tr[data-id] { cursor: default; }
 .vtable td.vjp, .vtable td.vmasu { font: 500 22px/1.3 var(--font-jp); letter-spacing: .03em; padding-block: 12px; }
 .vtable td.vmasu { font-weight: 400; }
+.vtable .vparen { font-size: calc(1em - 4px); }
 /* The verb's type (ru-verb, u-verb, irregular) as a tag, one colour each. */
 .vtable td.vty { white-space: nowrap; }
 .vtype { display: inline-block; padding: 2px 10px; border: 1.5px solid color-mix(in srgb, var(--tag) 80%, var(--ink)); border-radius: var(--pill); background: var(--tag); color: var(--ink); font-size: 11px; font-weight: 700; letter-spacing: .04em; }

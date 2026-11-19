@@ -1858,11 +1858,20 @@
       const tag = node("span", "vtype " + v.type, VTYPES[v.type].name);
       tag.title = VTYPES[v.type].title;
       ty.append(tag);
-      tr.append(node("td", "vjp", v.jp, true), node("td", "ro", v.romaji), ty, node("td", "vmasu", v.masu, true), node("td", "ven", v.ca), x);
+      tr.append(verbCell("vjp", v.jp, true), verbCell("ro", v.romaji), ty, verbCell("vmasu", v.masu, true), verbCell("ven", v.ca), x);
       body.append(tr);
     });
     $("vTotal").textContent = (q ? shown.length + " of " + all.length : all.length) + (all.length === 1 && !q ? " verb" : " verbs");
     if (freshId) setTimeout(() => { const el = body.querySelector("tr.fresh"); if (el) el.classList.remove("fresh"); }, 1700);
+  }
+
+  // A verb cell whose bracketed parts, such as "[place に]" or "(thing に)", get the smaller .vparen span.
+  function verbCell(cls, text, ja) {
+    const td = node("td", cls, "", ja);
+    String(text || "").split(/(\[[^\]]*\]|［[^］]*］|[(（][^)）]*[)）])/).forEach((part, i) => {
+      if (part) td.append(i % 2 ? node("span", "vparen", part) : part);
+    });
+    return td;
   }
 
   // Adding and editing share the popup form, like the words: editVerbId is the verb being edited.
