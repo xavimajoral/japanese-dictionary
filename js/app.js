@@ -254,7 +254,7 @@
     }
     return out;
   }
-  const unsaved = { words: false, notes: false }; // still showing the examples, see seedFromRepo()
+  const unsaved = { words: false, notes: false, verbs: false }; // still showing the examples, see seedFromRepo()
   let dir = null; // folder linked for auto-save, see "auto-save to a folder"
   let dirQueue = Promise.resolve();
   function load() {
@@ -307,13 +307,13 @@
     try { localStorage.setItem(ORDER_KEY, JSON.stringify(order)); } catch (e) { /* ignore */ }
     renderList();
   }
-  function renderSortbar() {
-    for (const b of $("sortbar").querySelectorAll(".sorth")) {
-      const on = b.dataset.sort === order.key;
+  function renderSortbar(bar = $("sortbar"), o = order) {
+    for (const b of bar.querySelectorAll(".sorth")) {
+      const on = b.dataset.sort === o.key;
       const th = b.parentElement;
-      if (on) th.setAttribute("aria-sort", order.dir > 0 ? "ascending" : "descending");
+      if (on) th.setAttribute("aria-sort", o.dir > 0 ? "ascending" : "descending");
       else th.removeAttribute("aria-sort");
-      b.title = "Sort by " + b.textContent + (on && order.dir > 0 ? ", descending" : ", ascending");
+      b.title = "Sort by " + b.textContent + (on && o.dir > 0 ? ", descending" : ", ascending");
     }
   }
 
@@ -636,7 +636,7 @@
   }
   function speak(w, btn) {
     tts.cancel();
-    if (tts.getVoices().length && !jaVoices.length) (tab === "notes" ? noteStatus : status)("This browser has no Japanese voice installed.");
+    if (tts.getVoices().length && !jaVoices.length) ({ notes: noteStatus, verbs: verbStatus }[tab] || status)("This browser has no Japanese voice installed.");
     // The furigana is unambiguous, so prefer it over the kanji when there is one.
     const u = new SpeechSynthesisUtterance(w.kana || w.jp);
     u.lang = "ja-JP";
@@ -1187,23 +1187,20 @@
   $("pOpen").addEventListener("click", () => showPlayer(true, true));
 
   /* ---------- theme ---------- */
-  // CSS Zen Garden style: "sakura" is style.css itself, every other option of #themeSel is css/themes/<name>.css
-  // linked after it (link[data-skin]). index.html links the saved one (or DEFAULT_STYLE) before first paint. The new
-  // sheet replaces the old one only once it has loaded, so switching doesn't flash the base design.
+  // CSS Zen Garden style: style.css is the shared base and every option of #themeSel is css/themes/<name>.css linked
+  // after it (link[data-skin]). index.html links the saved one (or DEFAULT_STYLE) before first paint. The new sheet
+  // replaces the old one only once it has loaded, so switching doesn't flash the base design.
   const STYLE_KEY = "diccionari-japones-estil";
   const DEFAULT_STYLE = "shinbun";
   const THEMES = Array.from($("themeSel").options, (o) => o.value);
-  let wantedStyle = "sakura";
+  let wantedStyle = DEFAULT_STYLE;
   function setStyle(name, remember) {
     if (!THEMES.includes(name)) name = DEFAULT_STYLE;
     wantedStyle = name;
     $("themeSel").value = name;
-    const root = document.documentElement;
-    if (name === "sakura") delete root.dataset.style;
-    else root.dataset.style = name;
+    document.documentElement.dataset.style = name;
     const skins = () => document.querySelectorAll("link[data-skin]");
-    if (name === "sakura") skins().forEach((l) => l.remove());
-    else if (!document.querySelector(`link[data-skin="${name}"]`)) {
+    if (!document.querySelector(`link[data-skin="${name}"]`)) {
       const link = document.createElement("link");
       link.rel = "stylesheet";
       link.href = `css/themes/${name}.css`;
@@ -1219,12 +1216,11 @@
     if (remember) try { localStorage.setItem(STYLE_KEY, name); } catch (e) { /* ignore */ }
   }
   $("themeSel").addEventListener("change", (e) => setStyle(e.target.value, true));
-  const savedStyle = document.documentElement.dataset.style || "sakura";
-  setStyle(savedStyle, !THEMES.includes(savedStyle));
+  setStyle(document.documentElement.dataset.style, false);
 
   /* ---------- tabs ---------- */
   const TAB_KEY = "diccionari-japones-pestanya";
-  const TABS = { dict: $("tabDict"), notes: $("tabNotes"), kana: $("tabKana") };
+  const TABS = { dict: $("tabDict"), notes: $("tabNotes"), verbs: $("tabVerbs"), kana: $("tabKana"), kata: $("tabKata") };
   let tab = "dict";
   function showTab(name, focus) {
     tab = TABS[name] ? name : "dict";
@@ -1235,9 +1231,9 @@
       $(TABS[k].getAttribute("aria-controls")).hidden = !on;
     }
     if (focus) TABS[tab].focus();
-    // The embedded hiragana table loads the first time its tab is opened.
-    const frame = $("kanaFrame");
-    if (tab === "kana" && !frame.src) frame.src = frame.dataset.src;
+    // An embedded kana table loads the first time its tab is opened.
+    const frame = $(TABS[tab].getAttribute("aria-controls")).querySelector("iframe[data-src]");
+    if (frame && !frame.src) frame.src = frame.dataset.src;
     // Nothing keeps drawing or speaking in a hidden tab.
     pause();
     if (tts) tts.cancel();
@@ -1674,9 +1670,319 @@
     noteBackupMsg("Loaded " + c.length + (c.length === 1 ? " note." : " notes."));
   });
 
+  /* ---------- verbs ---------- */
+  // The Verbs tab: its own list of {id, jp, masu, romaji, type, ca} (dictionary form, ます-form, the dictionary
+  // form's romaji, a VTYPES key, English meaning), stored under VKEY separately from the words, without the ids and
+  // in dictionary-form order. The flow mirrors the words:
+  // saveVerbs(), then renderVerbs(freshId?), then refreshVerbBackup().
+  const VKEY = "diccionari-japones-verbs-v1";
+  const VTYPES = {
+    ru: { name: "Ru-verb", title: "Ichidan verb (一段): drop る and add ます" },
+    u: { name: "U-verb", title: "Godan verb (五段): the last kana moves to the i-row before ます" },
+    irr: { name: "Irregular", title: "Irregular verb, such as する and くる" }
+  };
+  const VSEED = [
+    ["たべる", "たべます", "taberu", "ru", "to eat"],
+    ["のむ", "のみます", "nomu", "u", "to drink"],
+    ["いく", "いきます", "iku", "u", "to go"],
+    ["みる", "みます", "miru", "ru", "to see, to watch"],
+    ["する", "します", "suru", "irr", "to do"],
+    ["くる", "きます", "kuru", "irr", "to come"]
+  ];
+  function cleanVerbs(a) {
+    if (!Array.isArray(a)) return null;
+    const out = [];
+    for (const v of a) {
+      if (!v || typeof v.jp !== "string" || typeof v.ca !== "string") continue;
+      const jp = v.jp.trim().normalize("NFC");
+      const ca = v.ca.trim();
+      if (!jp || !ca) continue;
+      // Verbs saved before the romaji and type columns existed get both from the dictionary form.
+      const type = VTYPES[v.type] ? v.type : verbType(jp) || "u";
+      out.push({ id: uid(), jp, masu: (str(v.masu) || masuOf(jp, type)).normalize("NFC"), romaji: typeof v.romaji === "string" ? v.romaji.trim() : kanaToRomaji(jp), type, ca });
+    }
+    return out;
+  }
+  function loadVerbs() {
+    try {
+      const raw = localStorage.getItem(VKEY);
+      if (raw) { const c = cleanVerbs(JSON.parse(raw)); if (c) return c; }
+    } catch (e) { /* storage unavailable: start from the examples */ }
+    unsaved.verbs = true;
+    return VSEED.map(([jp, masu, romaji, type, ca]) => ({ id: uid(), jp, masu, romaji, type, ca }));
+  }
+  const sortedVerbs = () => [...verbs].sort((a, b) => a.jp.localeCompare(b.jp, "ja") || a.masu.localeCompare(b.masu, "ja"));
+  const plainVerbs = () => sortedVerbs().map(({ jp, masu, romaji, type, ca }) => ({ jp, masu, romaji, type, ca }));
+  const verbsJson = () => JSON.stringify(plainVerbs(), null, 2);
+  // The table's column sort, like the word list's: saving keeps the dictionary-form order (sortedVerbs()).
+  const VORDER_KEY = "diccionari-japones-ordre-verbs";
+  const VTYPE_RANK = Object.keys(VTYPES);
+  const VORDERS = {
+    jp: (a, b) => a.jp.localeCompare(b.jp, "ja"),
+    romaji: (a, b) => norm(a.romaji).localeCompare(norm(b.romaji), "en"),
+    type: (a, b) => VTYPE_RANK.indexOf(a.type) - VTYPE_RANK.indexOf(b.type),
+    ca: (a, b) => norm(a.ca).localeCompare(norm(b.ca), "en"),
+  };
+  let vOrder = { key: "jp", dir: 1 };
+  try {
+    const o = JSON.parse(localStorage.getItem(VORDER_KEY));
+    if (o && VORDERS[o.key] && (o.dir === 1 || o.dir === -1)) vOrder = { key: o.key, dir: o.dir };
+  } catch (e) { /* ignore */ }
+  function listedVerbs() {
+    const cmp = VORDERS[vOrder.key];
+    // Ties keep the dictionary-form order, whichever way the column runs; verbs without romaji go last.
+    return sortedVerbs().map((v, i) => [v, i]).sort((a, b) =>
+      (vOrder.key === "romaji" && !a[0].romaji - !b[0].romaji) || vOrder.dir * cmp(a[0], b[0]) || a[1] - b[1]).map(([v]) => v);
+  }
+  function setVerbOrder(key) {
+    vOrder = { key, dir: vOrder.key === key ? -vOrder.dir : 1 };
+    try { localStorage.setItem(VORDER_KEY, JSON.stringify(vOrder)); } catch (e) { /* ignore */ }
+    renderVerbs();
+  }
+  function saveVerbs() {
+    unsaved.verbs = false;
+    try { localStorage.setItem(VKEY, JSON.stringify(plainVerbs())); } catch (e) { /* ignore */ }
+    toFolder("verbs.json", verbsJson);
+  }
+  function refreshVerbBackup() { $("vBackup").value = verbsJson(); }
+  let verbs = loadVerbs();
+
+  // verbType() guesses a verb's type from its dictionary form ("" when it doesn't end like a verb): する and くる
+  // are irregular ("irr"), a verb in -iru/-eru is taken as a ru-verb (ichidan) unless it is listed in GODAN_RU, and
+  // every other one is a u-verb (godan). It is only a suggestion: homophones such as きる (着る / 切る) can go
+  // either way. masuOf() builds the ます-form for a type (the guessed one by default): ru-verbs drop る, u-verbs
+  // move the last kana to the i-row.
+  const I_ROW = { "う": "い", "く": "き", "ぐ": "ぎ", "す": "し", "つ": "ち", "ぬ": "に", "ぶ": "び", "む": "み", "る": "り" };
+  const ICHIDAN_STEM = /[いきぎしじちぢにひびぴみりえけげせぜてでねへべぺめれ見着寝出得居煮似経診観]$/;
+  const GODAN_RU = new Set(["かえる", "はいる", "はしる", "しる", "しゃべる", "すべる", "にぎる", "まいる", "かぎる", "あせる", "へる", "ける", "ちる", "まじる", "混じる", "交じる", "いじる", "かじる", "ねじる", "しげる", "ひねる", "つねる", "あざける", "よみがえる", "ひるがえる", "くつがえる"]);
+  const KURU = /(^|[てで])くる$/;
+  function verbType(dict) {
+    const d = str(dict).normalize("NFC");
+    const stem = d.slice(0, -1), end = d.slice(-1);
+    if (!stem || !I_ROW[end]) return "";
+    if (d.endsWith("する") || d.endsWith("来る") || KURU.test(d)) return "irr";
+    return end === "る" && !GODAN_RU.has(d) && ICHIDAN_STEM.test(stem) ? "ru" : "u";
+  }
+  function masuOf(dict, type) {
+    const d = str(dict).normalize("NFC");
+    const stem = d.slice(0, -1), end = d.slice(-1);
+    if (!stem || !I_ROW[end]) return "";
+    if (d.endsWith("する")) return d.slice(0, -2) + "します";
+    if (d.endsWith("来る")) return stem + "ます";
+    if (KURU.test(d)) return d.slice(0, -2) + "きます";
+    if (/(いらっしゃ|おっしゃ|くださ|下さ|なさ|ござ)る$/.test(d)) return stem + "います";
+    const ru = VTYPES[type] ? type === "ru" : verbType(d) === "ru";
+    return ru && end === "る" ? stem + "ます" : stem + I_ROW[end] + "ます";
+  }
+  // Hepburn romaji of a word written in kana ("" when it has anything else, such as kanji). Long vowels are
+  // spelled out as written (ou, ii).
+  const KANA_RO = (() => {
+    const t = { "ん": "n", "を": "o", "ゔ": "vu" };
+    const rows = { "": "あいうえお", k: "かきくけこ", g: "がぎぐげご", s: "さしすせそ", z: "ざじずぜぞ", t: "たちつてと", d: "だぢづでど", n: "なにぬねの", h: "はひふへほ", b: "ばびぶべぼ", p: "ぱぴぷぺぽ", m: "まみむめも", r: "らりるれろ" };
+    for (const c in rows) [...rows[c]].forEach((k, i) => { t[k] = c + "aiueo"[i]; });
+    Object.assign(t, { "し": "shi", "ち": "chi", "つ": "tsu", "ふ": "fu", "じ": "ji", "ぢ": "ji", "づ": "zu", "や": "ya", "ゆ": "yu", "よ": "yo", "わ": "wa" });
+    for (const k of "きぎにひびぴみり") [..."ゃゅょ"].forEach((y, i) => { t[k + y] = t[k][0] + "y" + "auo"[i]; });
+    for (const k of "しちじぢ") [..."ゃゅょ"].forEach((y, i) => { t[k + y] = t[k].slice(0, -1) + "auo"[i]; });
+    return t;
+  })();
+  function kanaToRomaji(kana) {
+    const s = toHira(str(kana).normalize("NFC"));
+    let out = "", double = false, afterN = false;
+    for (let i = 0; i < s.length; i++) {
+      const n = afterN;
+      afterN = s[i] === "ん";
+      if (s[i] === "っ") { double = true; continue; }
+      if (s[i] === "ー") { if (!out) return ""; out += out.slice(-1); continue; }
+      let r = KANA_RO[s.slice(i, i + 2)];
+      if (r) i++; else r = KANA_RO[s[i]];
+      if (!r) return "";
+      // っち is "tchi"; ん before a vowel or y takes an apostrophe.
+      if (double) { out += r[0] === "c" ? "t" : r[0]; double = false; }
+      if (n && /^[aiueoy]/.test(r)) out += "'";
+      out += r;
+    }
+    return double ? "" : out;
+  }
+
+  // vAuto and vRoAuto are the last suggested ます-form and romaji (a field follows its suggestion until it is typed
+  // by hand); vTypeHand is set once the type is picked by hand.
+  let vQuery = "", lastVerb = null, editVerbId = null, vAuto = "", vRoAuto = "", vTypeHand = false;
+  const vType = () => document.querySelector("input[name=vtype]:checked").value;
+  const setVType = (t) => { document.querySelector('input[name=vtype][value="' + t + '"]').checked = true; };
+  function resetVerbForm() {
+    $("vForm").reset();
+    vAuto = vRoAuto = "";
+    vTypeHand = false;
+    verbHint();
+  }
+  // Refills the fields that still hold a suggestion.
+  function suggestVerb() {
+    const jp = $("vJp").value;
+    if (!vTypeHand) setVType(verbType(jp) || "ru");
+    const m = masuOf(jp, vType()), cur = $("vMasu").value.trim();
+    if (!cur || cur === vAuto) $("vMasu").value = m;
+    vAuto = m;
+    const r = kanaToRomaji(jp), ro = $("vRo").value.trim();
+    if (!ro || ro === vRoAuto) $("vRo").value = r;
+    vRoAuto = r;
+  }
+  const verbStatus = (msg, undo) => flash($("vStatus"), msg, undo && undoVerb);
+  function verbHint(err) {
+    const h = $("vHint");
+    h.classList.toggle("err", !!err);
+    h.textContent = err || "The masu-form, the type and (for a verb written in kana) the romaji are suggested from the dictionary form. Check the type: verbs ending in -iru or -eru can be either ru-verbs or u-verbs.";
+  }
+  function renderVerbs(freshId) {
+    const raw = vQuery.trim().normalize("NFC"), q = norm(raw);
+    const all = listedVerbs();
+    renderSortbar($("vSortbar"), vOrder);
+    const shown = !q ? all : all.filter((v) => v.jp.includes(raw) || v.masu.includes(raw) || norm(v.romaji).includes(q) || norm(v.ca).includes(q) || norm(VTYPES[v.type].name).includes(q));
+    const body = $("vRows");
+    body.textContent = "";
+    if (!shown.length) {
+      const tr = document.createElement("tr");
+      const td = node("td", "none", all.length ? "No verbs match “" + vQuery.trim() + "”." : "No verbs yet. Add one with “New verb”.");
+      td.colSpan = 6;
+      tr.append(td);
+      body.append(tr);
+    }
+    shown.forEach((v) => {
+      const tr = document.createElement("tr");
+      tr.dataset.id = v.id;
+      if (v.id === freshId) tr.classList.add("fresh");
+      if (v.id === editVerbId) tr.classList.add("editing");
+      const x = node("td", "act");
+      if (tts) x.append(iconBtn("say", "Listen to " + v.jp + " and " + v.masu, "Listen"));
+      x.append(iconBtn("edit", "Edit " + v.jp, "Edit"), iconBtn("del", "Delete " + v.jp, "Delete"));
+      const ty = node("td", "vty");
+      const tag = node("span", "vtype " + v.type, VTYPES[v.type].name);
+      tag.title = VTYPES[v.type].title;
+      ty.append(tag);
+      tr.append(node("td", "vjp", v.jp, true), node("td", "ro", v.romaji), ty, node("td", "vmasu", v.masu, true), node("td", "ven", v.ca), x);
+      body.append(tr);
+    });
+    $("vTotal").textContent = (q ? shown.length + " of " + all.length : all.length) + (all.length === 1 && !q ? " verb" : " verbs");
+    if (freshId) setTimeout(() => { const el = body.querySelector("tr.fresh"); if (el) el.classList.remove("fresh"); }, 1700);
+  }
+
+  // Adding and editing share the popup form, like the words: editVerbId is the verb being edited.
+  function setVerbEditing(id) {
+    editVerbId = id;
+    const on = !!id;
+    $("vForm").classList.toggle("editing", on);
+    $("vKan").textContent = on ? "編集" : "追加";
+    $("vHead").textContent = on ? "Edit verb" : "Add a verb";
+    $("vSubmit").textContent = on ? "Save" : "Add";
+    document.querySelectorAll("#vRows tr[data-id]").forEach((tr) => tr.classList.toggle("editing", tr.dataset.id === id));
+  }
+  function cancelVerbEdit() {
+    if (!editVerbId) return;
+    setVerbEditing(null);
+    resetVerbForm();
+    verbPop.close();
+  }
+  // A half-typed new verb is kept for next time; closing the popup drops an edit in progress.
+  const verbPop = popup($("verbDlg"), cancelVerbEdit);
+  function editVerb(id) {
+    const v = verbs.find((x) => x.id === id);
+    if (!v) return;
+    setVerbEditing(id);
+    $("vJp").value = v.jp;
+    $("vMasu").value = v.masu;
+    $("vRo").value = v.romaji;
+    $("vCa").value = v.ca;
+    setVType(v.type);
+    vTypeHand = v.type !== verbType(v.jp);
+    vAuto = masuOf(v.jp, v.type);
+    vRoAuto = kanaToRomaji(v.jp);
+    verbHint();
+    verbPop.open($("vJp"));
+  }
+  function removeVerb(id) {
+    const index = verbs.findIndex((v) => v.id === id);
+    if (index < 0) return;
+    lastVerb = verbs.splice(index, 1)[0];
+    if (editVerbId === id) cancelVerbEdit();
+    saveVerbs();
+    renderVerbs();
+    refreshVerbBackup();
+    verbStatus("Deleted “" + lastVerb.jp + "”.", true);
+  }
+  function undoVerb() {
+    if (!lastVerb) return;
+    const v = lastVerb;
+    lastVerb = null;
+    verbs.push(v);
+    saveVerbs();
+    renderVerbs(v.id);
+    refreshVerbBackup();
+    verbStatus("Restored “" + v.jp + "”.");
+  }
+  $("vNew").addEventListener("click", () => { cancelVerbEdit(); verbPop.open($("vJp")); });
+  $("vJp").addEventListener("input", () => { suggestVerb(); verbHint(); });
+  $("vForm").addEventListener("change", (e) => {
+    if (e.target.name !== "vtype") return;
+    vTypeHand = true;
+    suggestVerb();
+  });
+  $("vForm").addEventListener("submit", (e) => {
+    e.preventDefault();
+    const jp = $("vJp").value.trim().normalize("NFC");
+    const type = vType();
+    const masu = ($("vMasu").value.trim() || masuOf(jp, type)).normalize("NFC");
+    const romaji = $("vRo").value.trim();
+    const ca = $("vCa").value.trim();
+    if (!jp || !masu || !ca) {
+      verbHint("Enter the dictionary form, the masu-form and the English meaning.");
+      (!jp ? $("vJp") : !masu ? $("vMasu") : $("vCa")).focus();
+      return;
+    }
+    const old = editVerbId && verbs.find((x) => x.id === editVerbId);
+    const v = old ? Object.assign(old, { jp, masu, romaji, type, ca }) : { id: uid(), jp, masu, romaji, type, ca };
+    if (!old) verbs.push(v);
+    setVerbEditing(null);
+    saveVerbs();
+    resetVerbForm();
+    // Make sure the saved verb is visible in the list.
+    vQuery = "";
+    $("vQ").value = "";
+    verbPop.close();
+    renderVerbs(v.id);
+    refreshVerbBackup();
+    verbStatus((old ? "Saved “" : "Added “") + jp + "”.");
+  });
+  $("vRows").addEventListener("click", (e) => {
+    const tr = e.target.closest("tr[data-id]");
+    if (!tr) return;
+    if (e.target.closest(".del")) removeVerb(tr.dataset.id);
+    else if (e.target.closest(".edit")) editVerb(tr.dataset.id);
+    else if (e.target.closest(".say")) {
+      const v = verbs.find((x) => x.id === tr.dataset.id);
+      // Both forms, with a pause in between.
+      if (v) speak({ jp: v.jp + "。" + v.masu }, e.target.closest(".say"));
+    }
+  });
+  $("vSortbar").addEventListener("click", (e) => { const b = e.target.closest(".sorth"); if (b) setVerbOrder(b.dataset.sort); });
+  $("vQ").addEventListener("input", (e) => { vQuery = e.target.value; renderVerbs(); });
+
+  function verbBackupMsg(m) { $("vBackupMsg").textContent = m; }
+  $("vCopy").addEventListener("click", () => copyBackup($("vBackup"), verbBackupMsg));
+  $("vLoad").addEventListener("click", () => {
+    let c = null;
+    try { const a = JSON.parse($("vBackup").value); c = cleanVerbs(a); if (c && !c.length && a.length) c = null; } catch (e) { c = null; }
+    if (!c) { verbBackupMsg("Invalid JSON. Each verb needs “jp” (dictionary form), “masu” and “ca” (the English meaning)."); return; }
+    verbs = c;
+    lastVerb = null;
+    cancelVerbEdit();
+    saveVerbs();
+    renderVerbs();
+    refreshVerbBackup();
+    verbBackupMsg("Loaded " + c.length + (c.length === 1 ? " verb." : " verbs."));
+  });
+
   /* ---------- auto-save to a folder ---------- */
   // File System Access API (Chromium only): the chosen directory handle is kept in IndexedDB,
-  // and every save() / saveNotes() rewrites words.json / notes.json there, in the backup format.
+  // and every save() / saveNotes() rewrites words.json / notes.json / verbs.json there, in the backup format.
   function idb(mode, fn) {
     return new Promise((resolve, reject) => {
       const open = indexedDB.open("diccionari-japones", 1);
@@ -1722,6 +2028,7 @@
     linkState();
     toFolder("words.json", wordsJson);
     toFolder("notes.json", notesJson);
+    toFolder("verbs.json", verbsJson);
   }
   function unlinkFolder() {
     const name = dir ? dir.name : "";
@@ -1753,6 +2060,9 @@
   resetComposer();
   renderNotes();
   refreshNoteBackup();
+  verbHint();
+  renderVerbs();
+  refreshVerbBackup();
   let savedTab = null;
   try { savedTab = localStorage.getItem(TAB_KEY); } catch (e) { /* ignore */ }
   showTab(savedTab);
@@ -1780,6 +2090,13 @@
       notes = c;
       renderNotes();
       refreshNoteBackup();
+    });
+    if (unsaved.verbs) get("verbs.json").then((a) => {
+      const c = a && cleanVerbs(a);
+      if (!c || !c.length || !unsaved.verbs) return;
+      verbs = c;
+      renderVerbs();
+      refreshVerbBackup();
     });
   }
 })();

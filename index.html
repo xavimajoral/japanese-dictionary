@@ -11,10 +11,10 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Kiwi+Maru:wght@400;500&family=Mochiy+Pop+One&family=Zen+Maru+Gothic:wght@400;500;700&family=DM+Mono:wght@400;500&display=swap">
 <link rel="stylesheet" href="css/style.css">
-<!-- Themes, CSS Zen Garden style: one markup, one stylesheet per design. style.css is the base "Sakura" design; the
-     saved theme's css/themes/<name>.css (or the default, "shinbun") is linked after it here, before first paint. The
-     choices are #themeSel's options. -->
-<script>var s = "shinbun"; try { s = localStorage.getItem("diccionari-japones-estil") || s; } catch (e) { /* ignore */ } if (s !== "sakura" && /^[a-z]+$/.test(s)) { document.documentElement.dataset.style = s; document.write('<link rel="stylesheet" href="css/themes/' + s + '.css" data-skin="' + s + '">'); }</script>
+<!-- Themes, CSS Zen Garden style: one markup, one stylesheet per design. style.css is the shared base that
+     every theme restyles; the saved theme's css/themes/<name>.css (or the default, "shinbun") is linked after it here,
+     before first paint. Keep the list in sync with #themeSel's options. -->
+<script>var s = "shinbun"; try { var v = localStorage.getItem("diccionari-japones-estil"); if (/^(sumi|matcha|neon|shinbun)$/.test(v)) s = v; } catch (e) { /* ignore */ } document.documentElement.dataset.style = s; document.write('<link rel="stylesheet" href="css/themes/' + s + '.css" data-skin="' + s + '">');</script>
 </head>
 <body>
 <div class="wrap">
@@ -29,8 +29,6 @@
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3a9 9 0 1 0 0 18c1.1 0 1.7-.8 1.7-1.7 0-.5-.2-.9-.5-1.2-.3-.3-.5-.7-.5-1.2 0-.9.8-1.7 1.7-1.7H16a5 5 0 0 0 5-5c0-4-4-7.2-9-7.2z"/><circle cx="7.5" cy="11.5" r="1" fill="currentColor"/><circle cx="10.5" cy="7.5" r="1" fill="currentColor"/><circle cx="15.5" cy="8" r="1" fill="currentColor"/></svg>
       <span>Theme</span>
       <select id="themeSel">
-        <option value="sakura">Sakura</option>
-        <option value="sora">Sora</option>
         <option value="sumi">Sumi</option>
         <option value="matcha">Matcha</option>
         <option value="neon">Neon</option>
@@ -42,7 +40,9 @@
   <nav class="tabs" id="tabs" role="tablist" aria-label="Sections">
     <button type="button" class="tab" role="tab" id="tabDict" data-tab="dict" aria-controls="pDict" aria-selected="true"><span class="kan" lang="ja" aria-hidden="true">辞書</span>Dictionary</button>
     <button type="button" class="tab" role="tab" id="tabNotes" data-tab="notes" aria-controls="pNotes" aria-selected="false" tabindex="-1"><span class="kan" lang="ja" aria-hidden="true">文法</span>Grammar and notes</button>
+    <button type="button" class="tab" role="tab" id="tabVerbs" data-tab="verbs" aria-controls="pVerbs" aria-selected="false" tabindex="-1"><span class="kan" lang="ja" aria-hidden="true">動詞</span>Verbs</button>
     <button type="button" class="tab" role="tab" id="tabKana" data-tab="kana" aria-controls="pKana" aria-selected="false" tabindex="-1"><span class="kan" lang="ja" aria-hidden="true">仮名</span>Hiragana table</button>
+    <button type="button" class="tab" role="tab" id="tabKata" data-tab="kata" aria-controls="pKata" aria-selected="false" tabindex="-1"><span class="kan" lang="ja" aria-hidden="true">カナ</span>Katakana table</button>
   </nav>
 
   <div class="layout" id="pDict" role="tabpanel" aria-labelledby="tabDict">
@@ -258,9 +258,79 @@
     </dialog>
   </div>
 
+  <div class="layout verbs" id="pVerbs" role="tabpanel" aria-labelledby="tabVerbs" hidden>
+    <main class="shelf">
+      <div class="toolbar">
+        <div class="search">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5L20 20"/></svg>
+          <input type="search" id="vQ" placeholder="Search verbs in Japanese, romaji or English" aria-label="Search verbs" autocomplete="off">
+        </div>
+        <span class="count" id="vTotal" aria-live="polite"></span>
+        <button type="button" class="btn primary" id="vNew"><span class="kan" lang="ja" aria-hidden="true">追加</span>New verb</button>
+      </div>
+
+      <div class="tablewrap">
+        <table class="vtable">
+          <thead id="vSortbar"><tr><th scope="col"><button type="button" class="sorth" data-sort="jp">Dictionary form<svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 10V2M2.5 5.5L6 2l3.5 3.5"/></svg></button></th><th scope="col"><button type="button" class="sorth" data-sort="romaji">Romaji<svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 10V2M2.5 5.5L6 2l3.5 3.5"/></svg></button></th><th scope="col"><button type="button" class="sorth" data-sort="type">Type<svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 10V2M2.5 5.5L6 2l3.5 3.5"/></svg></button></th><th scope="col">Masu-form</th><th scope="col"><button type="button" class="sorth" data-sort="ca">English<svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 10V2M2.5 5.5L6 2l3.5 3.5"/></svg></button></th><th scope="col"><span class="sr" style="position:absolute;left:-9999px">Actions</span></th></tr></thead>
+          <tbody id="vRows"></tbody>
+        </table>
+      </div>
+      <div class="status" id="vStatus" aria-live="polite"></div>
+
+      <details class="backup">
+        <summary><span class="label"><span class="kan" lang="ja" aria-hidden="true">保存</span>Verbs backup</span></summary>
+        <div class="body">
+          <p class="hint">Verbs are stored in this browser, separately from the words. Copy this JSON to keep it, or paste one and load it.</p>
+          <textarea id="vBackup" spellcheck="false" aria-label="Verbs as JSON"></textarea>
+          <div class="row">
+            <button type="button" class="btn" id="vCopy">Copy</button>
+            <button type="button" class="btn" id="vLoad">Load</button>
+            <span class="hint" id="vBackupMsg" aria-live="polite"></span>
+          </div>
+          <div class="row link" hidden>
+            <button type="button" class="btn link-pick">Auto-save to folder…</button>
+            <button type="button" class="btn link-stop" hidden>Stop</button>
+            <span class="hint link-msg" aria-live="polite"></span>
+          </div>
+        </div>
+      </details>
+    </main>
+
+    <dialog class="addpop" id="verbDlg" aria-labelledby="vHead">
+    <form class="add" id="vForm" autocomplete="off" novalidate>
+      <button type="button" class="del pclose" id="vClose" aria-label="Close" title="Close">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+      </button>
+      <h2 class="label"><span class="kan" lang="ja" aria-hidden="true" id="vKan">追加</span><span id="vHead">Add a verb</span></h2>
+      <div class="fields">
+        <div class="field"><label for="vJp">Dictionary form</label><input type="text" id="vJp" class="jpin" lang="ja" placeholder="たべる"></div>
+        <div class="field"><label for="vMasu">Masu-form</label><input type="text" id="vMasu" class="jpin" lang="ja" placeholder="たべます"></div>
+        <div class="field"><label for="vRo">Romaji</label><input type="text" id="vRo" placeholder="taberu"></div>
+        <div class="field"><label for="vCa">English</label><input type="text" id="vCa" placeholder="to eat"></div>
+      </div>
+      <div class="ffoot">
+        <div class="field regfield"><span class="flabel" id="vTypeLabel">Type</span>
+          <div class="seg three" role="radiogroup" aria-labelledby="vTypeLabel">
+            <label title="Ichidan verb (一段): drop る and add ます"><input type="radio" name="vtype" value="ru" checked><span>Ru-verb</span></label>
+            <label title="Godan verb (五段): the last kana moves to the i-row before ます"><input type="radio" name="vtype" value="u"><span>U-verb</span></label>
+            <label title="Irregular verb, such as する and くる"><input type="radio" name="vtype" value="irr"><span>Irregular</span></label>
+          </div>
+        </div>
+        <div class="fbtns"><button type="submit" class="btn primary" id="vSubmit">Add</button><button type="button" class="btn" id="vCancel">Cancel</button></div>
+      </div>
+      <p class="hint" id="vHint"></p>
+    </form>
+    </dialog>
+  </div>
+
   <div class="embed" id="pKana" role="tabpanel" aria-labelledby="tabKana" hidden>
     <iframe id="kanaFrame" title="Hiragana stroke table" data-src="hiragana_table_site/index.html"></iframe>
     <a class="hint" href="hiragana_table_site/index.html" target="_blank" rel="noopener">Open the hiragana table in a new tab</a>
+  </div>
+
+  <div class="embed" id="pKata" role="tabpanel" aria-labelledby="tabKata" hidden>
+    <iframe id="kataFrame" title="Katakana table" data-src="katakana_table_site/index.html"></iframe>
+    <a class="hint" href="katakana_table_site/index.html" target="_blank" rel="noopener">Open the katakana table in a new tab</a>
   </div>
 
   <footer>

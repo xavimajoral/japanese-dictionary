@@ -1,0 +1,86 @@
+[
+  {
+    "jp": "[home base に] かえる",
+    "masu": "かえます",
+    "romaji": "kaeru",
+    "type": "u",
+    "ca": "to return"
+  },
+  {
+    "jp": "[place に] いく",
+    "masu": "いきます",
+    "romaji": "iku",
+    "type": "u",
+    "ca": "to go"
+  },
+  {
+    "jp": "[place に] くる",
+    "masu": "くります",
+    "romaji": "kuru",
+    "type": "u",
+    "ca": "to come"
+  },
+  {
+    "jp": "[thing を] かう",
+    "masu": "かいます",
+    "romaji": "kau",
+    "type": "u",
+    "ca": "to buy"
+  },
+  {
+    "jp": "[thing を] する",
+    "masu": "します",
+    "romaji": "suru",
+    "type": "irr",
+    "ca": "to do"
+  },
+  {
+    "jp": "[thing を] たべる",
+    "masu": "たべます",
+    "romaji": "taberu",
+    "type": "ru",
+    "ca": "to eat"
+  },
+  {
+    "jp": "[thing を] よむ",
+    "masu": "よみます",
+    "romaji": "yomu",
+    "type": "u",
+    "ca": "to read"
+  },
+  {
+    "jp": "[thing を]みる",
+    "masu": "みます",
+    "romaji": "miru",
+    "type": "ru",
+    "ca": "to see, to watch"
+  },
+  {
+    "jp": "おきる",
+    "masu": "おきます",
+    "romaji": "okiru",
+    "type": "ru",
+    "ca": "get up / wake up"
+  },
+  {
+    "jp": "きく",
+    "masu": "ききます",
+    "romaji": "kiku",
+    "type": "u",
+    "ca": "[を] listen to / [に] to ask"
+  },
+  {
+    "jp": "ねる",
+    "masu": "ねます",
+    "romaji": "neru",
+    "type": "ru",
+    "ca": "to sleep / to go to bed"
+  },
+  {
+    "jp": "のむ",
+    "masu": "のみます",
+    "romaji": "nomu",
+    "type": "u",
+    "ca": "to drink"
+  }
+]
